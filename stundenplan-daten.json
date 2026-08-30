@@ -1,0 +1,556 @@
+{
+  "schule": "Gymnasium am Stadtpark",
+  "ort": "Musterstadt",
+  "schuljahr": "2026/27",
+  "gueltigAb": "31.08.2026",
+  "tage": [
+    {
+      "lang": "Montag",
+      "kurz": "Mo"
+    },
+    {
+      "lang": "Dienstag",
+      "kurz": "Di"
+    },
+    {
+      "lang": "Mittwoch",
+      "kurz": "Mi"
+    },
+    {
+      "lang": "Donnerstag",
+      "kurz": "Do"
+    },
+    {
+      "lang": "Freitag",
+      "kurz": "Fr"
+    }
+  ],
+  "stunden": [
+    {
+      "nr": 1,
+      "von": "07:45",
+      "bis": "08:30"
+    },
+    {
+      "nr": 2,
+      "von": "08:35",
+      "bis": "09:20"
+    },
+    {
+      "pause": true,
+      "name": "Frühstückspause",
+      "von": "09:20",
+      "bis": "09:40"
+    },
+    {
+      "nr": 3,
+      "von": "09:40",
+      "bis": "10:25"
+    },
+    {
+      "nr": 4,
+      "von": "10:30",
+      "bis": "11:15"
+    },
+    {
+      "pause": true,
+      "name": "Große Pause",
+      "von": "11:15",
+      "bis": "11:35"
+    },
+    {
+      "nr": 5,
+      "von": "11:35",
+      "bis": "12:20"
+    },
+    {
+      "nr": 6,
+      "von": "12:25",
+      "bis": "13:10"
+    },
+    {
+      "pause": true,
+      "name": "Mittagspause",
+      "von": "13:10",
+      "bis": "13:50"
+    },
+    {
+      "nr": 7,
+      "von": "13:50",
+      "bis": "14:35"
+    },
+    {
+      "nr": 8,
+      "von": "14:40",
+      "bis": "15:25"
+    }
+  ],
+  "lehrkraefte": {
+    "MEI": "Meier",
+    "SCH": "Schuster",
+    "BRA": "Brandt",
+    "KLE": "Klein",
+    "HOF": "Hoffmann",
+    "LOR": "Lorenz",
+    "WEB": "Weber",
+    "NEU": "Neumann",
+    "ALT": "Althaus",
+    "KRA": "Kraus",
+    "VOG": "Vogel",
+    "DIE": "Dietrich",
+    "ROT": "Roth",
+    "SEI": "Seifert"
+  },
+  "klassen": [
+    {
+      "klasse": "5a",
+      "klassenleitung": "Fr. Meier",
+      "raum": "A 105",
+      "plan": {
+        "Mo": {
+          "1": {
+            "fach": "Deutsch",
+            "raum": "A 105",
+            "lehrer": "MEI",
+            "dauer": 2
+          },
+          "3": {
+            "fach": "Mathematik",
+            "raum": "A 105",
+            "lehrer": "SCH"
+          },
+          "4": {
+            "fach": "Englisch",
+            "raum": "A 105",
+            "lehrer": "BRA"
+          },
+          "5": {
+            "fach": "Musik",
+            "raum": "M 2",
+            "lehrer": "HOF"
+          },
+          "6": {
+            "fach": "Kunst",
+            "raum": "K 1",
+            "lehrer": "LOR"
+          }
+        },
+        "Di": {
+          "1": {
+            "fach": "Mathematik",
+            "raum": "A 105",
+            "lehrer": "SCH"
+          },
+          "2": {
+            "fach": "Deutsch",
+            "raum": "A 105",
+            "lehrer": "MEI"
+          },
+          "3": {
+            "fach": "Sport",
+            "raum": "Halle 1",
+            "lehrer": "KLE",
+            "dauer": 2
+          },
+          "5": {
+            "fach": "Biologie",
+            "raum": "B 1",
+            "lehrer": "WEB"
+          },
+          "6": {
+            "fach": "Geografie",
+            "raum": "A 105",
+            "lehrer": "NEU"
+          }
+        },
+        "Mi": {
+          "1": {
+            "fach": "Englisch",
+            "raum": "A 105",
+            "lehrer": "BRA"
+          },
+          "2": {
+            "fach": "Mathematik",
+            "raum": "A 105",
+            "lehrer": "SCH"
+          },
+          "3": {
+            "fach": "Deutsch",
+            "raum": "A 105",
+            "lehrer": "MEI"
+          },
+          "4": {
+            "fach": "Geschichte",
+            "raum": "A 105",
+            "lehrer": "NEU"
+          },
+          "5": {
+            "fach": "Klassenrat",
+            "raum": "A 105",
+            "lehrer": "MEI"
+          }
+        },
+        "Do": {
+          "1": {
+            "fach": "Biologie",
+            "raum": "B 1",
+            "lehrer": "WEB"
+          },
+          "2": {
+            "fach": "Englisch",
+            "raum": "A 105",
+            "lehrer": "BRA"
+          },
+          "3": {
+            "fach": "Mathematik",
+            "raum": "A 105",
+            "lehrer": "SCH"
+          },
+          "4": {
+            "fach": "Deutsch",
+            "raum": "A 105",
+            "lehrer": "MEI"
+          },
+          "5": {
+            "fach": "Religion",
+            "raum": "R 2",
+            "lehrer": "ALT"
+          },
+          "6": {
+            "fach": "Ethik",
+            "raum": "R 3",
+            "lehrer": "ALT"
+          }
+        },
+        "Fr": {
+          "1": {
+            "fach": "Deutsch",
+            "raum": "A 105",
+            "lehrer": "MEI"
+          },
+          "2": {
+            "fach": "Geografie",
+            "raum": "A 105",
+            "lehrer": "NEU"
+          },
+          "3": {
+            "fach": "Englisch",
+            "raum": "A 105",
+            "lehrer": "BRA"
+          },
+          "4": {
+            "fach": "Mathematik",
+            "raum": "A 105",
+            "lehrer": "SCH"
+          },
+          "5": {
+            "fach": "Sport",
+            "raum": "Halle 1",
+            "lehrer": "KLE"
+          }
+        }
+      }
+    },
+    {
+      "klasse": "7b",
+      "klassenleitung": "Hr. Kraus",
+      "raum": "B 204",
+      "plan": {
+        "Mo": {
+          "1": {
+            "fach": "Mathematik",
+            "raum": "B 204",
+            "lehrer": "KRA",
+            "dauer": 2
+          },
+          "3": {
+            "fach": "Französisch",
+            "raum": "B 204",
+            "lehrer": "VOG"
+          },
+          "4": {
+            "fach": "Deutsch",
+            "raum": "B 204",
+            "lehrer": "ROT"
+          },
+          "5": {
+            "fach": "Physik",
+            "raum": "P 1",
+            "lehrer": "DIE"
+          },
+          "6": {
+            "fach": "Physik",
+            "raum": "P 1",
+            "lehrer": "DIE"
+          },
+          "7": {
+            "fach": "Förderunterricht",
+            "raum": "B 204",
+            "lehrer": "ROT"
+          }
+        },
+        "Di": {
+          "1": {
+            "fach": "Englisch",
+            "raum": "B 204",
+            "lehrer": "BRA"
+          },
+          "2": {
+            "fach": "Geschichte",
+            "raum": "B 204",
+            "lehrer": "NEU"
+          },
+          "3": {
+            "fach": "Mathematik",
+            "raum": "B 204",
+            "lehrer": "KRA"
+          },
+          "4": {
+            "fach": "Deutsch",
+            "raum": "B 204",
+            "lehrer": "ROT"
+          },
+          "5": {
+            "fach": "Kunst",
+            "raum": "K 1",
+            "lehrer": "LOR",
+            "dauer": 2
+          }
+        },
+        "Mi": {
+          "1": {
+            "fach": "Chemie",
+            "raum": "C 2",
+            "lehrer": "SEI",
+            "dauer": 2
+          },
+          "3": {
+            "fach": "Englisch",
+            "raum": "B 204",
+            "lehrer": "BRA"
+          },
+          "4": {
+            "fach": "Französisch",
+            "raum": "B 204",
+            "lehrer": "VOG"
+          },
+          "5": {
+            "fach": "Sport",
+            "raum": "Halle 2",
+            "lehrer": "KLE",
+            "dauer": 2
+          }
+        },
+        "Do": {
+          "1": {
+            "fach": "Deutsch",
+            "raum": "B 204",
+            "lehrer": "ROT"
+          },
+          "2": {
+            "fach": "Mathematik",
+            "raum": "B 204",
+            "lehrer": "KRA"
+          },
+          "3": {
+            "fach": "Biologie",
+            "raum": "B 1",
+            "lehrer": "WEB"
+          },
+          "4": {
+            "fach": "Politik",
+            "raum": "B 204",
+            "lehrer": "NEU"
+          },
+          "5": {
+            "fach": "Informatik",
+            "raum": "I 1",
+            "lehrer": "DIE"
+          },
+          "6": {
+            "fach": "Informatik",
+            "raum": "I 1",
+            "lehrer": "DIE"
+          },
+          "7": {
+            "fach": "AG Theater",
+            "raum": "Aula",
+            "lehrer": "LOR",
+            "dauer": 2
+          }
+        },
+        "Fr": {
+          "1": {
+            "fach": "Französisch",
+            "raum": "B 204",
+            "lehrer": "VOG"
+          },
+          "2": {
+            "fach": "Englisch",
+            "raum": "B 204",
+            "lehrer": "BRA"
+          },
+          "3": {
+            "fach": "Musik",
+            "raum": "M 2",
+            "lehrer": "HOF"
+          },
+          "4": {
+            "fach": "Geschichte",
+            "raum": "B 204",
+            "lehrer": "NEU"
+          },
+          "5": {
+            "fach": "Mathematik",
+            "raum": "B 204",
+            "lehrer": "KRA"
+          }
+        }
+      }
+    },
+    {
+      "klasse": "9c",
+      "klassenleitung": "Fr. Weber",
+      "raum": "C 312",
+      "plan": {
+        "Mo": {
+          "1": {
+            "fach": "Chemie",
+            "raum": "C 2",
+            "lehrer": "SEI",
+            "dauer": 2
+          },
+          "3": {
+            "fach": "Deutsch",
+            "raum": "C 312",
+            "lehrer": "ROT"
+          },
+          "4": {
+            "fach": "Mathematik",
+            "raum": "C 312",
+            "lehrer": "KRA"
+          },
+          "5": {
+            "fach": "Sport",
+            "raum": "Halle 1",
+            "lehrer": "KLE",
+            "dauer": 2
+          },
+          "7": {
+            "fach": "WAT",
+            "raum": "W 1",
+            "lehrer": "DIE",
+            "dauer": 2
+          }
+        },
+        "Di": {
+          "1": {
+            "fach": "Englisch",
+            "raum": "C 312",
+            "lehrer": "BRA"
+          },
+          "2": {
+            "fach": "Biologie",
+            "raum": "B 1",
+            "lehrer": "WEB"
+          },
+          "3": {
+            "fach": "Physik",
+            "raum": "P 1",
+            "lehrer": "DIE",
+            "dauer": 2
+          },
+          "5": {
+            "fach": "Deutsch",
+            "raum": "C 312",
+            "lehrer": "ROT"
+          },
+          "6": {
+            "fach": "Geschichte",
+            "raum": "C 312",
+            "lehrer": "NEU"
+          }
+        },
+        "Mi": {
+          "1": {
+            "fach": "Mathematik",
+            "raum": "C 312",
+            "lehrer": "KRA"
+          },
+          "2": {
+            "fach": "Spanisch",
+            "raum": "C 312",
+            "lehrer": "VOG"
+          },
+          "3": {
+            "fach": "Englisch",
+            "raum": "C 312",
+            "lehrer": "BRA"
+          },
+          "4": {
+            "fach": "Politik",
+            "raum": "C 312",
+            "lehrer": "NEU"
+          },
+          "5": {
+            "fach": "Informatik",
+            "raum": "I 1",
+            "lehrer": "DIE",
+            "dauer": 2
+          }
+        },
+        "Do": {
+          "1": {
+            "fach": "Deutsch",
+            "raum": "C 312",
+            "lehrer": "ROT",
+            "dauer": 2
+          },
+          "3": {
+            "fach": "Chemie",
+            "raum": "C 2",
+            "lehrer": "SEI"
+          },
+          "4": {
+            "fach": "Mathematik",
+            "raum": "C 312",
+            "lehrer": "KRA"
+          },
+          "5": {
+            "fach": "Kunst",
+            "raum": "K 1",
+            "lehrer": "LOR",
+            "dauer": 2
+          }
+        },
+        "Fr": {
+          "1": {
+            "fach": "Biologie",
+            "raum": "B 1",
+            "lehrer": "WEB"
+          },
+          "2": {
+            "fach": "Englisch",
+            "raum": "C 312",
+            "lehrer": "BRA"
+          },
+          "3": {
+            "fach": "Spanisch",
+            "raum": "C 312",
+            "lehrer": "VOG"
+          },
+          "4": {
+            "fach": "Physik",
+            "raum": "P 1",
+            "lehrer": "DIE"
+          },
+          "5": {
+            "fach": "Geschichte",
+            "raum": "C 312",
+            "lehrer": "NEU"
+          }
+        }
+      }
+    }
+  ]
+}
