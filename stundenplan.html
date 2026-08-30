@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stundenplan – A4-Druckvorlage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   STUNDENPLAN — A4-Druckvorlage
+   Bögen: A4 hoch/quer · Nutzen: 1-, 2-, 4-fach oder frei (mm)
+   ============================================================ */
+
+:root{
+  /* Papier & Tinte */
+  --paper:#ffffff;
+  --ink:#17191d;
+  --ink-2:#5d6470;
+  --ink-3:#8d95a3;
+  --hair:#dcdfe5;
+  --hair-2:#b9bfc9;
+  --akzent:#1f3b4d;
+
+  /* App-Chrome */
+  --shell:#1b1a18;
+  --shell-2:#232220;
+  --shell-3:#2f2d2a;
+  --shell-line:#3a3835;
+  --shell-ink:#f2efe9;
+  --shell-ink-2:#a49e93;
+  --amber:#e0a340;
+
+  --sans:"IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+}
+
+*,*::before,*::after{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+[hidden]{ display:none !important; }
+
+html,body{ margin:0; padding:0; }
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(900px 500px at 12% -10%, #262421 0%, transparent 60%),
+    var(--shell);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================ WERKZEUGLEISTE ============================ */
+
+.toolbar{
+  position:sticky; top:0; z-index:50;
+  background:linear-gradient(#1f1e1c, #1a1917);
+  border-bottom:1px solid var(--shell-line);
+  color:var(--shell-ink);
+  box-shadow:0 10px 30px -18px rgba(0,0,0,.9);
+}
+.tb-row{
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:12px 22px;
+}
+.tb-row + .tb-row{ border-top:1px solid var(--shell-line); }
+
+.brand{ display:flex; align-items:baseline; gap:10px; margin-right:6px; }
+.brand b{
+  font-family:var(--serif); font-weight:600; font-size:19px;
+  letter-spacing:.005em; font-optical-sizing:auto;
+}
+.brand span{
+  font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--shell-ink-2);
+}
+
+.grp{ display:flex; align-items:center; gap:9px; }
+.grp > label.lbl{
+  font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--shell-ink-2); white-space:nowrap;
+}
+
+/* Segment-Umschalter */
+.seg{ display:inline-flex; background:var(--shell-3); border:1px solid var(--shell-line); border-radius:8px; padding:2px; gap:2px; }
+.seg button{
+  font:inherit; font-size:12.5px; font-weight:500;
+  color:var(--shell-ink-2); background:transparent; border:0; cursor:pointer;
+  padding:5px 11px; border-radius:6px; line-height:1.2; white-space:nowrap;
+  transition:background .15s ease, color .15s ease;
+}
+.seg button:hover{ color:var(--shell-ink); }
+.seg button[aria-pressed="true"]{ background:var(--amber); color:#241c0c; font-weight:600; }
+
+input[type=number], input[type=text]{
+  font:inherit; font-family:var(--mono); font-size:12.5px;
+  width:64px; padding:5px 7px;
+  background:var(--shell-3); color:var(--shell-ink);
+  border:1px solid var(--shell-line); border-radius:6px;
+}
+input[type=number]:focus, input[type=text]:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+input[type=range]{ accent-color:var(--amber); width:120px; }
+
+.chk{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--shell-ink-2); cursor:pointer; user-select:none; }
+.chk input{ accent-color:var(--amber); width:14px; height:14px; }
+.chk:hover{ color:var(--shell-ink); }
+
+.btn{
+  font:inherit; font-size:12.5px; font-weight:600; cursor:pointer;
+  padding:7px 14px; border-radius:8px; line-height:1.2;
+  background:var(--shell-3); color:var(--shell-ink); border:1px solid var(--shell-line);
+  transition:background .15s ease, border-color .15s ease, transform .1s ease;
+}
+.btn:hover{ background:#3a3733; }
+.btn:active{ transform:translateY(1px); }
+.btn.primary{ background:var(--amber); color:#241c0c; border-color:#c98d2e; }
+.btn.primary:hover{ background:#eeb254; }
+
+.spacer{ flex:1 1 auto; }
+.val{ font-family:var(--mono); font-size:12px; color:var(--amber); min-width:44px; }
+
+/* Klassen-Auswahl */
+details.dd{ position:relative; }
+details.dd > summary{
+  list-style:none; cursor:pointer;
+  font-size:12.5px; padding:6px 12px; border-radius:8px;
+  background:var(--shell-3); border:1px solid var(--shell-line); color:var(--shell-ink);
+}
+details.dd > summary::-webkit-details-marker{ display:none; }
+details.dd > summary::after{ content:" ▾"; color:var(--shell-ink-2); }
+.dd-panel{
+  position:absolute; z-index:60; top:calc(100% + 6px); left:0; min-width:230px;
+  background:#26241f; border:1px solid var(--shell-line); border-radius:10px;
+  padding:10px; box-shadow:0 24px 50px -20px rgba(0,0,0,.85);
+  display:flex; flex-direction:column; gap:7px; max-height:60vh; overflow:auto;
+}
+
+.hint{
+  font-size:11.5px; color:var(--shell-ink-2); line-height:1.55;
+  border-left:2px solid var(--amber); padding-left:11px; max-width:none;
+}
+.hint b{ color:var(--shell-ink); font-weight:600; }
+
+/* JSON-Editor */
+.editor{ padding:0 22px 16px; }
+.editor textarea{
+  width:100%; height:290px; resize:vertical;
+  font-family:var(--mono); font-size:12px; line-height:1.6;
+  background:#141311; color:#d8d3c8; border:1px solid var(--shell-line);
+  border-radius:10px; padding:14px;
+}
+.editor textarea:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+.editor .ed-bar{ display:flex; gap:9px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+.ed-msg{ font-size:12px; font-family:var(--mono); }
+.ed-msg.ok{ color:#8fce6a; } .ed-msg.err{ color:#ef8b6b; }
+
+/* ============================ ARBEITSFLÄCHE ============================ */
+
+.workspace{
+  padding:34px 20px 80px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.28), transparent 140px),
+    #e9e6e0;
+  min-height:70vh;
+}
+#pages{ zoom:1; }
+.sheet{
+  position:relative;
+  background:var(--paper);
+  margin:0 auto 26px;
+  box-shadow:0 2px 4px rgba(0,0,0,.12), 0 26px 50px -26px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.sheet-grid{ display:grid; width:100%; height:100%; align-content:start; justify-content:start; }
+.slot{ position:relative; overflow:hidden; }
+.marks .slot{ outline:1px dashed rgba(0,0,0,.32); outline-offset:-1px; }
+
+/* ============================ DER PLAN ============================ */
+
+.plan{
+  height:100%; width:100%;
+  display:flex; flex-direction:column;
+  color:var(--ink);
+  font-size:calc(var(--u,1) * 5mm);
+  line-height:1.25;
+}
+
+/* — Kopf — */
+.plan-head{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:1em;
+  padding-bottom:.55em;
+  border-bottom:.16em solid var(--ink);
+}
+.eyebrow{
+  font-size:.44em; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink-2); font-weight:600; margin-bottom:.5em;
+}
+.school{
+  font-family:var(--serif); font-optical-sizing:auto;
+  font-weight:600; font-size:1.28em; line-height:1.02; margin:0;
+  letter-spacing:-.012em;
+}
+.head-meta{
+  margin-top:.42em; font-size:.5em; color:var(--ink-2);
+  display:flex; gap:.9em; flex-wrap:wrap;
+}
+.head-meta b{ color:var(--ink); font-weight:600; }
+
+.klasse-chip{
+  flex:0 0 auto; text-align:center;
+  background:var(--akzent); color:#fff;
+  border-radius:.22em;
+  padding:.18em .5em .26em;
+  min-width:2.1em;
+}
+.klasse-chip .kl-lbl{
+  display:block; font-size:.32em; letter-spacing:.2em; text-transform:uppercase;
+  opacity:.72; margin-bottom:.2em;
+}
+.klasse-chip .kl-name{
+  display:block; font-family:var(--serif); font-weight:600;
+  font-size:1.55em; line-height:.95; letter-spacing:-.02em;
+}
+
+/* — Tabelle — */
+.plan-body{ flex:1 1 auto; min-height:0; padding-top:.35em; }
+.plan-table{
+  width:100%; height:100%;
+  border-collapse:separate; border-spacing:0;
+  table-layout:fixed;
+}
+.plan-table th, .plan-table td{ padding:0; vertical-align:middle; }
+
+thead th{
+  padding:.42em .3em .5em;
+  font-size:.46em; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-2); text-align:center;
+  border-bottom:1px solid var(--hair-2);
+}
+thead th.th-zeit{ text-align:left; padding-left:.5em; }
+.plan.compact .tag-lang{ display:none; }
+.tag-kurz{ display:none; }
+.plan.compact .tag-kurz{ display:inline; }
+
+/* Zeitspalte */
+td.c-zeit{
+  padding:.14em .5em .14em .1em;
+  border-right:1px solid var(--hair);
+  text-align:right; white-space:nowrap;
+}
+td.c-zeit .nr{
+  font-family:var(--serif); font-weight:600;
+  font-size:.92em; line-height:1; color:var(--ink);
+}
+td.c-zeit .zeiten{
+  font-family:var(--mono); font-size:.42em; line-height:1.35;
+  color:var(--ink-2); margin-top:.35em; font-variant-numeric:tabular-nums;
+}
+td.c-zeit .bis{ color:var(--ink-3); }
+
+/* Fachzellen */
+td.c-fach{ padding:.1em .09em; }
+.cell{
+  height:100%; min-height:1.9em;
+  display:flex; flex-direction:column; justify-content:center;
+  border-radius:.2em;
+  border-left:.2em solid var(--c,#94a3b8);
+  background:#f6f7f8;
+  background:color-mix(in srgb, var(--c,#94a3b8) 8%, #fff);
+  padding:.28em .45em .3em;
+  overflow:hidden;
+}
+.cell .fach{
+  font-weight:600; font-size:.62em; line-height:1.16;
+  letter-spacing:-.005em; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis;
+}
+.cell .sub{
+  margin-top:.18em;
+  font-size:.42em; line-height:1.2; color:var(--ink-2);
+  font-family:var(--mono); letter-spacing:-.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.cell .sub .sep{ color:var(--ink-3); margin:0 .35em; }
+.cell .lehrer{ color:var(--c,#555); font-weight:500; }
+.cell.dbl .fach::after{
+  content:""; display:block; width:1.4em; height:1px;
+  background:color-mix(in srgb, var(--c,#94a3b8) 55%, transparent);
+  margin-top:.3em;
+}
+td.leer .cell{
+  background:repeating-linear-gradient(135deg, #fafbfc 0 3px, #f4f5f7 3px 6px);
+  border-left-color:#e6e8ec;
+}
+
+/* Pausenzeile */
+tr.pause td{
+  padding:.1em 0;
+}
+.pause-band{
+  display:flex; align-items:center; gap:.7em;
+  padding:.1em .5em;
+  border-top:1px dotted var(--hair-2);
+  border-bottom:1px dotted var(--hair-2);
+  background:#fbfaf8;
+}
+.pause-band .p-name{
+  font-size:.42em; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-2); font-weight:600;
+}
+.pause-band .p-zeit{
+  font-family:var(--mono); font-size:.4em; color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+}
+.pause-band .p-line{ flex:1 1 auto; height:1px; background:var(--hair); }
+
+/* — Fuß — */
+.plan-foot{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:1em;
+  border-top:1px solid var(--hair-2);
+  padding-top:.4em; margin-top:.3em;
+}
+.legende{
+  display:flex; flex-wrap:wrap; gap:.15em .8em;
+  font-size:.38em; color:var(--ink-2); line-height:1.5;
+}
+.legende .lk b{ font-family:var(--mono); font-weight:600; color:var(--ink); }
+.stand{
+  font-family:var(--mono); font-size:.36em; color:var(--ink-3);
+  white-space:nowrap; text-align:right;
+}
+.plan.tiny .legende{ display:none; }
+
+/* Graustufen */
+.mono-print .cell{ background:#f3f3f4 !important; border-left-color:#3f4046 !important; }
+.mono-print td.leer .cell{ background:repeating-linear-gradient(135deg,#fafafa 0 3px,#f3f3f3 3px 6px) !important; border-left-color:#e4e4e6 !important; }
+.mono-print .cell .lehrer{ color:var(--ink-2) !important; }
+.mono-print .klasse-chip{ background:#1f2125 !important; }
+
+/* ============================ DRUCK ============================ */
+
+@media print{
+  html,body{ background:#fff !important; }
+  .toolbar, .editor, .no-print{ display:none !important; }
+  .workspace{ padding:0 !important; background:#fff !important; min-height:0 !important; }
+  #pages{ zoom:1 !important; }
+  .sheet{
+    margin:0 !important; box-shadow:none !important;
+    break-after:page; page-break-after:always;
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .sheet:last-child{ break-after:auto; page-break-after:auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="toolbar no-print">
+  <div class="tb-row">
+    <div class="brand"><b>Stundenplan</b><span>A4-Druckvorlage</span></div>
+
+    <div class="grp">
+      <label class="lbl">Nutzen</label>
+      <div class="seg" id="segMode">
+        <button data-v="1" aria-pressed="true">1-fach</button>
+        <button data-v="2" aria-pressed="false">2-fach</button>
+        <button data-v="4" aria-pressed="false">4-fach</button>
+        <button data-v="custom" aria-pressed="false">Eigene Größe</button>
+      </div>
+    </div>
+
+    <div class="grp" id="grpCustom" hidden>
+      <label class="lbl">Breite × Höhe (mm)</label>
+      <input type="number" id="cw" value="105" min="20" max="420" step="1" placeholder="auto" title="leer = volle Breite">
+      <input type="number" id="ch" value="140" min="20" max="420" step="1" placeholder="auto" title="leer = volle Höhe">
+    </div>
+
+    <div class="grp">
+      <label class="lbl">Bogen</label>
+      <div class="seg" id="segOri">
+        <button data-v="portrait" aria-pressed="true">A4 hoch</button>
+        <button data-v="landscape" aria-pressed="false">A4 quer</button>
+      </div>
+    </div>
+
+    <div class="grp">
+      <label class="lbl">Farbe</label>
+      <div class="seg" id="segColor">
+        <button data-v="farbe" aria-pressed="true">Farbig</button>
+        <button data-v="mono" aria-pressed="false">Graustufen</button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="btn primary" id="btnPrint">Drucken / PDF</button>
+  </div>
+
+  <div class="tb-row">
+    <div class="grp">
+      <label class="lbl">Klassen</label>
+      <details class="dd" id="ddKlassen">
+        <summary id="ddSummary">alle</summary>
+        <div class="dd-panel" id="ddPanel"></div>
+      </details>
+    </div>
+
+    <div class="grp">
+      <label class="lbl">Kopien</label>
+      <input type="number" id="copies" value="1" min="1" max="50" step="1">
+    </div>
+
+    <div class="grp">
+      <label class="lbl">Seitenrand</label>
+      <input type="number" id="margin" value="8" min="0" max="25" step="1">
+    </div>
+
+    <div class="grp">
+      <label class="lbl">Schrift</label>
+      <input type="range" id="fs" min="70" max="135" step="1" value="100">
+      <span class="val" id="fsVal">100 %</span>
+    </div>
+
+    <div class="grp">
+      <label class="chk"><input type="checkbox" id="marks"> Schnittmarken</label>
+      <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
+      <label class="chk"><input type="checkbox" id="trim"> Randstunden kürzen</label>
+      <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="grp">
+      <label class="lbl">Ansicht</label>
+      <input type="range" id="zoom" min="25" max="150" step="1" value="100">
+      <span class="val" id="zoomVal">100 %</span>
+    </div>
+    <button class="btn" id="btnEdit">Daten bearbeiten</button>
+  </div>
+
+  <div class="tb-row">
+    <p class="hint">
+      <b>Druckdialog:</b> Ränder auf <b>Keine</b> stellen, <b>Hintergrundgrafiken</b> aktivieren,
+      Kopf- und Fußzeilen abschalten, Skalierung <b>100 %</b>. Das Seitenformat (A4 hoch/quer) setzt die Vorlage selbst.
+    </p>
+  </div>
+
+  <div class="editor" id="editor" hidden>
+    <textarea id="json" spellcheck="false"></textarea>
+    <div class="ed-bar">
+      <button class="btn primary" id="btnApply">Übernehmen</button>
+      <button class="btn" id="btnReset">Beispieldaten</button>
+      <button class="btn" id="btnDownload">JSON sichern</button>
+      <label class="btn" for="fileIn" style="display:inline-block">JSON laden</label>
+      <input type="file" id="fileIn" accept=".json,application/json" hidden>
+      <span class="ed-msg" id="edMsg"></span>
+    </div>
+  </div>
+</header>
+
+<main class="workspace">
+  <div id="pages"></div>
+</main>
+
+<script>
+/* ============================================================
+   1. DATEN  — hier oder über „Daten bearbeiten“ anpassen
+   ============================================================ */
+
+const BEISPIEL = {
+  schule: "Gymnasium am Stadtpark",
+  ort: "Musterstadt",
+  schuljahr: "2026/27",
+  gueltigAb: "31.08.2026",
+  tage: [
+    { lang:"Montag",     kurz:"Mo" },
+    { lang:"Dienstag",   kurz:"Di" },
+    { lang:"Mittwoch",   kurz:"Mi" },
+    { lang:"Donnerstag", kurz:"Do" },
+    { lang:"Freitag",    kurz:"Fr" }
+  ],
+  stunden: [
+    { nr:1, von:"07:45", bis:"08:30" },
+    { nr:2, von:"08:35", bis:"09:20" },
+    { pause:true, name:"Frühstückspause", von:"09:20", bis:"09:40" },
+    { nr:3, von:"09:40", bis:"10:25" },
+    { nr:4, von:"10:30", bis:"11:15" },
+    { pause:true, name:"Große Pause", von:"11:15", bis:"11:35" },
+    { nr:5, von:"11:35", bis:"12:20" },
+    { nr:6, von:"12:25", bis:"13:10" },
+    { pause:true, name:"Mittagspause", von:"13:10", bis:"13:50" },
+    { nr:7, von:"13:50", bis:"14:35" },
+    { nr:8, von:"14:40", bis:"15:25" }
+  ],
+  lehrkraefte: {
+    MEI:"Meier", SCH:"Schuster", BRA:"Brandt", KLE:"Klein", HOF:"Hoffmann",
+    LOR:"Lorenz", WEB:"Weber", NEU:"Neumann", ALT:"Althaus", KRA:"Kraus",
+    VOG:"Vogel", DIE:"Dietrich", ROT:"Roth", SEI:"Seifert"
+  },
+  klassen: [
+    {
+      klasse:"5a", klassenleitung:"Fr. Meier", raum:"A 105",
+      plan:{
+        Mo:{ 1:{fach:"Deutsch", raum:"A 105", lehrer:"MEI", dauer:2},
+             3:{fach:"Mathematik", raum:"A 105", lehrer:"SCH"},
+             4:{fach:"Englisch", raum:"A 105", lehrer:"BRA"},
+             5:{fach:"Musik", raum:"M 2", lehrer:"HOF"},
+             6:{fach:"Kunst", raum:"K 1", lehrer:"LOR"} },
+        Di:{ 1:{fach:"Mathematik", raum:"A 105", lehrer:"SCH"},
+             2:{fach:"Deutsch", raum:"A 105", lehrer:"MEI"},
+             3:{fach:"Sport", raum:"Halle 1", lehrer:"KLE", dauer:2},
+             5:{fach:"Biologie", raum:"B 1", lehrer:"WEB"},
+             6:{fach:"Geografie", raum:"A 105", lehrer:"NEU"} },
+        Mi:{ 1:{fach:"Englisch", raum:"A 105", lehrer:"BRA"},
+             2:{fach:"Mathematik", raum:"A 105", lehrer:"SCH"},
+             3:{fach:"Deutsch", raum:"A 105", lehrer:"MEI"},
+             4:{fach:"Geschichte", raum:"A 105", lehrer:"NEU"},
+             5:{fach:"Klassenrat", raum:"A 105", lehrer:"MEI"} },
+        Do:{ 1:{fach:"Biologie", raum:"B 1", lehrer:"WEB"},
+             2:{fach:"Englisch", raum:"A 105", lehrer:"BRA"},
+             3:{fach:"Mathematik", raum:"A 105", lehrer:"SCH"},
+             4:{fach:"Deutsch", raum:"A 105", lehrer:"MEI"},
+             5:{fach:"Religion", raum:"R 2", lehrer:"ALT"},
+             6:{fach:"Ethik", raum:"R 3", lehrer:"ALT"} },
+        Fr:{ 1:{fach:"Deutsch", raum:"A 105", lehrer:"MEI"},
+             2:{fach:"Geografie", raum:"A 105", lehrer:"NEU"},
+             3:{fach:"Englisch", raum:"A 105", lehrer:"BRA"},
+             4:{fach:"Mathematik", raum:"A 105", lehrer:"SCH"},
+             5:{fach:"Sport", raum:"Halle 1", lehrer:"KLE"} }
+      }
+    },
+    {
+      klasse:"7b", klassenleitung:"Hr. Kraus", raum:"B 204",
+      plan:{
+        Mo:{ 1:{fach:"Mathematik", raum:"B 204", lehrer:"KRA", dauer:2},
+             3:{fach:"Französisch", raum:"B 204", lehrer:"VOG"},
+             4:{fach:"Deutsch", raum:"B 204", lehrer:"ROT"},
+             5:{fach:"Physik", raum:"P 1", lehrer:"DIE"},
+             6:{fach:"Physik", raum:"P 1", lehrer:"DIE"},
+             7:{fach:"Förderunterricht", raum:"B 204", lehrer:"ROT"} },
+        Di:{ 1:{fach:"Englisch", raum:"B 204", lehrer:"BRA"},
+             2:{fach:"Geschichte", raum:"B 204", lehrer:"NEU"},
+             3:{fach:"Mathematik", raum:"B 204", lehrer:"KRA"},
+             4:{fach:"Deutsch", raum:"B 204", lehrer:"ROT"},
+             5:{fach:"Kunst", raum:"K 1", lehrer:"LOR", dauer:2} },
+        Mi:{ 1:{fach:"Chemie", raum:"C 2", lehrer:"SEI", dauer:2},
+             3:{fach:"Englisch", raum:"B 204", lehrer:"BRA"},
+             4:{fach:"Französisch", raum:"B 204", lehrer:"VOG"},
+             5:{fach:"Sport", raum:"Halle 2", lehrer:"KLE", dauer:2} },
+        Do:{ 1:{fach:"Deutsch", raum:"B 204", lehrer:"ROT"},
+             2:{fach:"Mathematik", raum:"B 204", lehrer:"KRA"},
+             3:{fach:"Biologie", raum:"B 1", lehrer:"WEB"},
+             4:{fach:"Politik", raum:"B 204", lehrer:"NEU"},
+             5:{fach:"Informatik", raum:"I 1", lehrer:"DIE"},
+             6:{fach:"Informatik", raum:"I 1", lehrer:"DIE"},
+             7:{fach:"AG Theater", raum:"Aula", lehrer:"LOR", dauer:2} },
+        Fr:{ 1:{fach:"Französisch", raum:"B 204", lehrer:"VOG"},
+             2:{fach:"Englisch", raum:"B 204", lehrer:"BRA"},
+             3:{fach:"Musik", raum:"M 2", lehrer:"HOF"},
+             4:{fach:"Geschichte", raum:"B 204", lehrer:"NEU"},
+             5:{fach:"Mathematik", raum:"B 204", lehrer:"KRA"} }
+      }
+    },
+    {
+      klasse:"9c", klassenleitung:"Fr. Weber", raum:"C 312",
+      plan:{
+        Mo:{ 1:{fach:"Chemie", raum:"C 2", lehrer:"SEI", dauer:2},
+             3:{fach:"Deutsch", raum:"C 312", lehrer:"ROT"},
+             4:{fach:"Mathematik", raum:"C 312", lehrer:"KRA"},
+             5:{fach:"Sport", raum:"Halle 1", lehrer:"KLE", dauer:2},
+             7:{fach:"WAT", raum:"W 1", lehrer:"DIE", dauer:2} },
+        Di:{ 1:{fach:"Englisch", raum:"C 312", lehrer:"BRA"},
+             2:{fach:"Biologie", raum:"B 1", lehrer:"WEB"},
+             3:{fach:"Physik", raum:"P 1", lehrer:"DIE", dauer:2},
+             5:{fach:"Deutsch", raum:"C 312", lehrer:"ROT"},
+             6:{fach:"Geschichte", raum:"C 312", lehrer:"NEU"} },
+        Mi:{ 1:{fach:"Mathematik", raum:"C 312", lehrer:"KRA"},
+             2:{fach:"Spanisch", raum:"C 312", lehrer:"VOG"},
+             3:{fach:"Englisch", raum:"C 312", lehrer:"BRA"},
+             4:{fach:"Politik", raum:"C 312", lehrer:"NEU"},
+             5:{fach:"Informatik", raum:"I 1", lehrer:"DIE", dauer:2} },
+        Do:{ 1:{fach:"Deutsch", raum:"C 312", lehrer:"ROT", dauer:2},
+             3:{fach:"Chemie", raum:"C 2", lehrer:"SEI"},
+             4:{fach:"Mathematik", raum:"C 312", lehrer:"KRA"},
+             5:{fach:"Kunst", raum:"K 1", lehrer:"LOR", dauer:2} },
+        Fr:{ 1:{fach:"Biologie", raum:"B 1", lehrer:"WEB"},
+             2:{fach:"Englisch", raum:"C 312", lehrer:"BRA"},
+             3:{fach:"Spanisch", raum:"C 312", lehrer:"VOG"},
+             4:{fach:"Physik", raum:"P 1", lehrer:"DIE"},
+             5:{fach:"Geschichte", raum:"C 312", lehrer:"NEU"} }
+      }
+    }
+  ]
+};
+
+/* Farbzuordnung der Fächer (Print-taugliche, gedeckte Töne) */
+const FACH_FARBEN = {
+  "deutsch":"#b03a17", "mathematik":"#1b4fd0", "mathe":"#1b4fd0",
+  "englisch":"#6d28d9", "französisch":"#8b2fb3", "franzoesisch":"#8b2fb3",
+  "latein":"#7a2ac0", "spanisch":"#a01c8f",
+  "biologie":"#1a7a3c", "chemie":"#0f7268", "physik":"#0a5f96",
+  "sachunterricht":"#0d857a", "nawi":"#12706a",
+  "geschichte":"#8a4712", "geografie":"#186238", "erdkunde":"#186238",
+  "politik":"#a85c0a", "sozialkunde":"#a85c0a", "wirtschaft":"#a85c0a",
+  "religion":"#96650d", "ethik":"#96650d", "philosophie":"#96650d",
+  "kunst":"#b31543", "musik":"#b4239f", "sport":"#04794f",
+  "informatik":"#3b4756", "wat":"#6d3a12", "werken":"#6d3a12",
+  "klassenrat":"#4a5262", "förderunterricht":"#4a5262",
+  "foerderunterricht":"#4a5262", "ag":"#4a5262"
+};
+
+function fachFarbe(fach){
+  if(!fach) return "#94a3b8";
+  const f = fach.toLowerCase().trim();
+  if(FACH_FARBEN[f]) return FACH_FARBEN[f];
+  for(const k in FACH_FARBEN){ if(f.startsWith(k) || k.startsWith(f)) return FACH_FARBEN[k]; }
+  let h = 0;
+  for(let i=0;i<f.length;i++) h = (h*31 + f.charCodeAt(i)) % 360;
+  return `hsl(${h} 50% 34%)`;
+}
+
+/* ============================================================
+   2. ZUSTAND
+   ============================================================ */
+
+const SPEICHER = "stundenplan.daten.v1";
+let DATEN = ladeDaten();
+
+const CONFIG = {
+  mode:"1", orientation:"portrait", farbe:true,
+  cw:105, ch:140, margin:8, fontScale:100,
+  marks:false, legende:true, trim:false, fuellen:true, copies:1, zoom:100,
+  auswahl:null            // null = alle
+};
+
+function ladeDaten(){
+  try{
+    const s = localStorage.getItem(SPEICHER);
+    if(s) return JSON.parse(s);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(BEISPIEL));
+}
+function sichereDaten(){
+  try{ localStorage.setItem(SPEICHER, JSON.stringify(DATEN)); }catch(e){}
+}
+
+/* ============================================================
+   3. AUFBAU EINES PLANS
+   ============================================================ */
+
+function el(tag, cls, txt){
+  const n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(txt != null) n.textContent = txt;
+  return n;
+}
+
+function planKarte(kl, u){
+  const plan = el("div","plan");
+  plan.style.setProperty("--u", u);
+  if(u < 0.62) plan.classList.add("compact");
+  if(u < 0.46) plan.classList.add("tiny");
+
+  /* --- Kopf --- */
+  const head = el("header","plan-head");
+  const left = el("div","ph-left");
+  const eyebrow = el("div","eyebrow",
+    "Stundenplan" + (DATEN.schuljahr ? " · Schuljahr " + DATEN.schuljahr : ""));
+  const school = el("h1","school", DATEN.schule || "");
+  left.append(eyebrow, school);
+
+  const meta = el("div","head-meta");
+  if(kl.klassenleitung){
+    const s = el("span"); s.innerHTML = "Klassenleitung <b></b>";
+    s.querySelector("b").textContent = kl.klassenleitung; meta.append(s);
+  }
+  if(kl.raum){
+    const s = el("span"); s.innerHTML = "Klassenraum <b></b>";
+    s.querySelector("b").textContent = kl.raum; meta.append(s);
+  }
+  if(DATEN.ort) meta.append(el("span", null, DATEN.ort));
+  if(meta.children.length) left.append(meta);
+
+  const chip = el("div","klasse-chip");
+  chip.append(el("span","kl-lbl","Klasse"), el("span","kl-name", kl.klasse || "—"));
+  head.append(left, chip);
+
+  /* --- Tabelle --- */
+  const tage = DATEN.tage || [];
+  let stunden = DATEN.stunden || [];
+
+  /* Leere Randstunden am Anfang/Ende wegnehmen.
+     Zeilen, die nur durch den Verbund einer Doppelstunde belegt sind,
+     zaehlen dabei als belegt — sonst wuerde die zweite Haelfte abgeschnitten. */
+  if(CONFIG.trim){
+    const belegt = new Array(stunden.length).fill(false);
+    tage.forEach(t => {
+      const tp = (kl.plan || {})[t.kurz] || (kl.plan || {})[t.lang] || {};
+      stunden.forEach((st, i) => {
+        if(st.pause) return;
+        const e = tp[String(st.nr)] ?? tp[st.nr];
+        if(!e || !e.fach) return;
+        belegt[i] = true;
+        const d = Math.max(1, parseInt(e.dauer || 1, 10));
+        for(let k = 1; k < d; k++){          // gleiche Regel wie beim Zeilenverbund
+          const nx = stunden[i + k];
+          if(!nx || nx.pause) break;
+          belegt[i + k] = true;
+        }
+      });
+    });
+    let a = 0, b = stunden.length - 1;
+    while(a <= b && !belegt[a]) a++;
+    while(b >= a && !belegt[b]) b--;
+    if(a <= b) stunden = stunden.slice(a, b + 1);
+  }
+
+  const body = el("div","plan-body");
+  const table = el("table","plan-table");
+
+  const cg = el("colgroup");
+  const c0 = el("col"); c0.style.width = "13%"; cg.append(c0);
+  tage.forEach(()=>{ const c = el("col"); c.style.width = (87/Math.max(1,tage.length))+"%"; cg.append(c); });
+  table.append(cg);
+
+  const thead = el("thead");
+  const htr = el("tr");
+  const thZ = el("th","th-zeit","Zeit"); htr.append(thZ);
+  tage.forEach(t=>{
+    const th = el("th");
+    th.append(el("span","tag-lang", t.lang || t.kurz), el("span","tag-kurz", t.kurz || t.lang));
+    htr.append(th);
+  });
+  thead.append(htr); table.append(thead);
+
+  const tbody = el("tbody");
+  const belegt = new Set();   // "Kurz|Zeilenindex"
+
+  stunden.forEach((st, i) => {
+    const tr = el("tr");
+
+    if(st.pause){
+      tr.className = "pause";
+      const td = el("td"); td.colSpan = tage.length + 1;
+      const band = el("div","pause-band");
+      band.append(el("span","p-name", st.name || "Pause"));
+      band.append(el("span","p-line"));
+      if(st.von && st.bis) band.append(el("span","p-zeit", st.von + " – " + st.bis));
+      td.append(band); tr.append(td); tbody.append(tr);
+      return;
+    }
+
+    const tdZ = el("td","c-zeit");
+    tdZ.append(el("div","nr", String(st.nr ?? "")));
+    const z = el("div","zeiten");
+    z.append(el("div","von", st.von || ""), el("div","bis", st.bis || ""));
+    tdZ.append(z);
+    tr.append(tdZ);
+
+    tage.forEach(t => {
+      const key = (t.kurz || t.lang) + "|" + i;
+      if(belegt.has(key)) return;
+
+      const tagPlan = (kl.plan || {})[t.kurz] || (kl.plan || {})[t.lang] || {};
+      const eintrag = tagPlan[String(st.nr)] ?? tagPlan[st.nr];
+
+      const td = el("td","c-fach");
+      if(!eintrag || !eintrag.fach){
+        td.classList.add("leer");
+        td.append(el("div","cell"));
+        tr.append(td);
+        return;
+      }
+
+      /* Doppelstunde: nur über direkt folgende Unterrichtszeilen ohne Pause */
+      let d = Math.max(1, parseInt(eintrag.dauer || 1, 10));
+      let span = 1;
+      for(let k = 1; k < d; k++){
+        const nx = stunden[i+k];
+        if(!nx || nx.pause) break;
+        span++;
+      }
+      if(span > 1){
+        td.rowSpan = span;
+        for(let k = 1; k < span; k++) belegt.add((t.kurz || t.lang) + "|" + (i+k));
+      }
+
+      const farbe = eintrag.farbe || fachFarbe(eintrag.fach);
+      td.style.setProperty("--c", farbe);
+
+      const cell = el("div","cell" + (span > 1 ? " dbl" : ""));
+      cell.append(el("div","fach", eintrag.fach));
+
+      const sub = el("div","sub");
+      if(eintrag.raum) sub.append(el("span","raum", eintrag.raum));
+      if(eintrag.raum && eintrag.lehrer) sub.append(el("span","sep","·"));
+      if(eintrag.lehrer) sub.append(el("span","lehrer", eintrag.lehrer));
+      if(eintrag.hinweis){
+        if(sub.children.length) sub.append(el("span","sep","·"));
+        sub.append(el("span","hinweis", eintrag.hinweis));
+      }
+      if(sub.children.length) cell.append(sub);
+
+      td.append(cell);
+      tr.append(td);
+    });
+
+    tbody.append(tr);
+  });
+
+  table.append(tbody);
+  body.append(table);
+
+  /* --- Fuß --- */
+  const foot = el("footer","plan-foot");
+  const leg = el("div","legende");
+  if(CONFIG.legende && DATEN.lehrkraefte){
+    const benutzt = new Set();
+    Object.values(kl.plan || {}).forEach(tag =>
+      Object.values(tag || {}).forEach(e => { if(e && e.lehrer) benutzt.add(e.lehrer); }));
+    [...benutzt].sort().forEach(k => {
+      if(!DATEN.lehrkraefte[k]) return;
+      const s = el("span","lk");
+      s.innerHTML = "<b></b> ";
+      s.querySelector("b").textContent = k;
+      s.append(document.createTextNode(DATEN.lehrkraefte[k]));
+      leg.append(s);
+    });
+  }
+  const stand = el("div","stand", DATEN.gueltigAb ? "gültig ab " + DATEN.gueltigAb : "");
+  foot.append(leg, stand);
+
+  plan.append(head, body, foot);
+  return plan;
+}
+
+/* ============================================================
+   4. SEITENAUFTEILUNG (Nutzen)
+   ============================================================ */
+
+function rechneLayout(){
+  const P = CONFIG.orientation === "landscape" ? {w:297, h:210} : {w:210, h:297};
+  const M = Math.min(25, Math.max(0, CONFIG.margin));
+  const druckW = P.w - 2*M, druckH = P.h - 2*M;
+
+  let cols, rows, slotW, slotH;
+
+  if(CONFIG.mode === "custom"){
+    /* Leeres Feld = volle Breite bzw. Höhe des Satzspiegels */
+    slotW = (CONFIG.cw == null) ? druckW : Math.min(druckW, Math.max(20, CONFIG.cw));
+    slotH = (CONFIG.ch == null) ? druckH : Math.min(druckH, Math.max(20, CONFIG.ch));
+    cols = Math.max(1, Math.floor((druckW + 0.15) / slotW));
+    rows = Math.max(1, Math.floor((druckH + 0.15) / slotH));
+  }else{
+    const n = parseInt(CONFIG.mode, 10);
+    if(n === 1){ cols = 1; rows = 1; }
+    else if(n === 2){ if(P.w > P.h){ cols = 2; rows = 1; } else { cols = 1; rows = 2; } }
+    else { cols = 2; rows = 2; }
+    slotW = druckW / cols;
+    slotH = druckH / rows;
+  }
+
+  /* Maßstab: kleinerer der beiden Verhältnisse — garantiert, dass alles passt */
+  const u = Math.min(slotW/druckW, slotH/druckH) * (CONFIG.fontScale/100);
+
+  return { P, M, druckW, druckH, cols, rows, slotW, slotH, u, proSeite: cols*rows };
+}
+
+function aktiveKlassen(){
+  const alle = DATEN.klassen || [];
+  if(!CONFIG.auswahl) return alle;
+  return alle.filter(k => CONFIG.auswahl.includes(k.klasse));
+}
+
+function zeichne(){
+  const L = rechneLayout();
+  const host = document.getElementById("pages");
+  host.innerHTML = "";
+  document.body.classList.toggle("mono-print", !CONFIG.farbe);
+
+  const gewaehlt = aktiveKlassen();
+  const items = [];
+  gewaehlt.forEach(k => {
+    for(let c = 0; c < Math.max(1, CONFIG.copies); c++) items.push(k);
+  });
+
+  /* Nur ein Plan gewählt: restliche Nutzen des Bogens mit Kopien auffüllen */
+  if(CONFIG.fuellen && gewaehlt.length === 1 && items.length % L.proSeite !== 0){
+    const fehlend = L.proSeite - (items.length % L.proSeite);
+    for(let i = 0; i < fehlend; i++) items.push(gewaehlt[0]);
+  }
+
+  if(!items.length){
+    const leer = el("div");
+    leer.style.cssText = "text-align:center;padding:70px 20px;color:#6b7280;font-size:14px";
+    leer.textContent = "Keine Klasse ausgewählt.";
+    host.append(leer);
+    return;
+  }
+
+  /* Innenabstand der Zellen, damit nichts an der Schnittkante klebt */
+  const pad = (CONFIG.mode === "1" ? 0 : 3) * Math.max(0.55, L.u);
+
+  for(let i = 0; i < items.length; i += L.proSeite){
+    const sheet = el("div","sheet" + (CONFIG.marks ? " marks" : ""));
+    sheet.style.width  = L.P.w + "mm";
+    sheet.style.height = (L.P.h - 0.1) + "mm";   // Sicherheitsabzug gegen Leerseiten
+    sheet.style.padding = L.M + "mm";
+
+    const grid = el("div","sheet-grid");
+    grid.style.gridTemplateColumns = `repeat(${L.cols}, ${L.slotW}mm)`;
+    grid.style.gridTemplateRows    = `repeat(${L.rows}, ${L.slotH}mm)`;
+
+    for(let s = 0; s < L.proSeite && (i+s) < items.length; s++){
+      const slot = el("div","slot");
+      slot.style.padding = pad + "mm";
+      slot.append(planKarte(items[i+s], L.u));
+      grid.append(slot);
+    }
+
+    sheet.append(grid);
+    host.append(sheet);
+  }
+
+  setzeSeitenformat(L);
+}
+
+let styleSeite = null;
+function setzeSeitenformat(L){
+  if(!styleSeite){
+    styleSeite = document.createElement("style");
+    document.head.append(styleSeite);
+  }
+  styleSeite.textContent =
+    `@page { size: A4 ${CONFIG.orientation === "landscape" ? "landscape" : "portrait"}; margin: 0; }`;
+}
+
+/* ============================================================
+   5. BEDIENUNG
+   ============================================================ */
+
+function seg(id, key, nach){
+  const box = document.getElementById(id);
+  box.addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    [...box.querySelectorAll("button")].forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    CONFIG[key] = b.dataset.v;
+    if(nach) nach(b.dataset.v);
+    zeichne();
+  });
+}
+
+seg("segMode","mode", v => {
+  document.getElementById("grpCustom").hidden = (v !== "custom");
+});
+seg("segOri","orientation", () => requestAnimationFrame(passeZoomEin));
+document.getElementById("segColor").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  const box = document.getElementById("segColor");
+  [...box.querySelectorAll("button")].forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  CONFIG.farbe = (b.dataset.v === "farbe");
+  zeichne();
+});
+
+function num(id, key, leerErlaubt){
+  const n = document.getElementById(id);
+  n.addEventListener("input", () => {
+    const roh = n.value.trim();
+    if(roh === "" && leerErlaubt){ CONFIG[key] = null; zeichne(); return; }
+    const v = parseFloat(roh);
+    if(!isNaN(v)){ CONFIG[key] = v; zeichne(); }
+  });
+}
+num("cw","cw",true); num("ch","ch",true); num("margin","margin"); num("copies","copies");
+
+document.getElementById("fs").addEventListener("input", e => {
+  CONFIG.fontScale = +e.target.value;
+  document.getElementById("fsVal").textContent = CONFIG.fontScale + " %";
+  zeichne();
+});
+let zoomManuell = false;
+document.getElementById("zoom").addEventListener("input", e => {
+  zoomManuell = true;
+  CONFIG.zoom = +e.target.value;
+  document.getElementById("zoomVal").textContent = CONFIG.zoom + " %";
+  document.getElementById("pages").style.zoom = CONFIG.zoom / 100;
+});
+document.getElementById("marks").addEventListener("change", e => { CONFIG.marks = e.target.checked; zeichne(); });
+document.getElementById("legende").addEventListener("change", e => { CONFIG.legende = e.target.checked; zeichne(); });
+document.getElementById("trim").addEventListener("change", e => { CONFIG.trim = e.target.checked; zeichne(); });
+document.getElementById("fuellen").addEventListener("change", e => { CONFIG.fuellen = e.target.checked; zeichne(); });
+document.getElementById("btnPrint").addEventListener("click", () => window.print());
+
+/* Klassenauswahl */
+function baueKlassenAuswahl(){
+  const panel = document.getElementById("ddPanel");
+  panel.innerHTML = "";
+  (DATEN.klassen || []).forEach(k => {
+    const lab = el("label","chk");
+    const inp = document.createElement("input");
+    inp.type = "checkbox"; inp.value = k.klasse;
+    inp.checked = !CONFIG.auswahl || CONFIG.auswahl.includes(k.klasse);
+    inp.addEventListener("change", () => {
+      const gewaehlt = [...panel.querySelectorAll("input:checked")].map(x => x.value);
+      CONFIG.auswahl = (gewaehlt.length === (DATEN.klassen || []).length) ? null : gewaehlt;
+      aktualisiereSummary();
+      zeichne();
+    });
+    lab.append(inp, document.createTextNode(k.klasse + (k.klassenleitung ? " — " + k.klassenleitung : "")));
+    panel.append(lab);
+  });
+  aktualisiereSummary();
+}
+function aktualisiereSummary(){
+  const s = document.getElementById("ddSummary");
+  s.textContent = !CONFIG.auswahl ? "alle (" + (DATEN.klassen || []).length + ")"
+    : (CONFIG.auswahl.length ? CONFIG.auswahl.join(", ") : "keine");
+}
+
+/* JSON-Editor */
+const editor = document.getElementById("editor");
+const ta = document.getElementById("json");
+const msg = document.getElementById("edMsg");
+
+document.getElementById("btnEdit").addEventListener("click", () => {
+  editor.hidden = !editor.hidden;
+  if(!editor.hidden){ ta.value = JSON.stringify(DATEN, null, 2); msg.textContent = ""; ta.focus(); }
+});
+document.getElementById("btnApply").addEventListener("click", () => {
+  try{
+    const neu = JSON.parse(ta.value);
+    if(!Array.isArray(neu.klassen)) throw new Error("Feld „klassen“ fehlt oder ist keine Liste.");
+    if(!Array.isArray(neu.stunden)) throw new Error("Feld „stunden“ fehlt oder ist keine Liste.");
+    if(!Array.isArray(neu.tage))    throw new Error("Feld „tage“ fehlt oder ist keine Liste.");
+    DATEN = neu; CONFIG.auswahl = null;
+    sichereDaten(); baueKlassenAuswahl(); zeichne();
+    msg.className = "ed-msg ok"; msg.textContent = "✓ übernommen und gespeichert";
+  }catch(err){
+    msg.className = "ed-msg err"; msg.textContent = "Fehler: " + err.message;
+  }
+});
+document.getElementById("btnReset").addEventListener("click", () => {
+  DATEN = JSON.parse(JSON.stringify(BEISPIEL));
+  CONFIG.auswahl = null;
+  try{ localStorage.removeItem(SPEICHER); }catch(e){}
+  ta.value = JSON.stringify(DATEN, null, 2);
+  baueKlassenAuswahl(); zeichne();
+  msg.className = "ed-msg ok"; msg.textContent = "✓ Beispieldaten wiederhergestellt";
+});
+document.getElementById("btnDownload").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(DATEN, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "stundenplan-daten.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+document.getElementById("fileIn").addEventListener("change", e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => { ta.value = r.result; editor.hidden = false; document.getElementById("btnApply").click(); };
+  r.readAsText(f);
+});
+
+/* Ansicht automatisch einpassen */
+function passeZoomEin(){
+  if(zoomManuell) return;
+  const breiteMm = CONFIG.orientation === "landscape" ? 297 : 210;
+  const px = breiteMm * (96/25.4);
+  const platz = document.querySelector(".workspace").clientWidth - 40;
+  if(platz < 120) return;                       // Layout noch nicht fertig
+  const z = Math.max(25, Math.min(100, Math.round(platz / px * 100)));
+  CONFIG.zoom = z;
+  document.getElementById("zoom").value = z;
+  document.getElementById("zoomVal").textContent = z + " %";
+  document.getElementById("pages").style.zoom = z / 100;
+}
+
+baueKlassenAuswahl();
+zeichne();
+requestAnimationFrame(() => requestAnimationFrame(passeZoomEin));
+window.addEventListener("load", passeZoomEin);
+window.addEventListener("resize", passeZoomEin);
+</script>
+</body>
+</html>
