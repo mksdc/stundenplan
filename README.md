@@ -4,3 +4,5 @@ Stundenplan ist ein HTML-Seite, die im Webbrowser einen Stundenplan im JSON-Form
 
 
 https://mksdc.github.io/stundenplan
+
+![Stundenplan](screenshot.png "Stundenplan")
