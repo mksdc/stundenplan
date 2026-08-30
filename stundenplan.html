@@ -141,16 +141,131 @@ details.dd > summary::after{ content:" ▾"; color:var(--shell-ink-2); }
 }
 .hint b{ color:var(--shell-ink); font-weight:600; }
 
-/* JSON-Editor */
-.editor{ padding:0 22px 16px; }
+/* ============================ DATENEDITOR ============================ */
+
+.editor{
+  padding:18px 22px 24px; color-scheme:dark;
+  color:var(--shell-ink);                 /* sonst erbt er die dunkle Papier-Tinte */
+  background:linear-gradient(#1a1917, #151412);
+  border-bottom:1px solid var(--shell-line);
+}
+.fachname{ font-size:12.5px; color:var(--shell-ink); flex:1 1 auto; }
+.fachstatus{ font-size:11px; color:#8a8378; font-family:var(--mono); }
+/* Sonst waere die klebende Leiste zusammen mit dem Formular hoeher
+   als das Fenster und der untere Teil unerreichbar. */
+body.editor-offen .toolbar{ position:static; }
+
+.ed-tabs{
+  display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  border-bottom:1px solid var(--shell-line); padding-bottom:11px; margin-bottom:16px;
+}
+.ed-tabs button[data-t]{
+  font:inherit; font-size:12.5px; font-weight:500; cursor:pointer;
+  background:transparent; border:1px solid transparent; border-radius:8px;
+  color:var(--shell-ink-2); padding:6px 13px;
+}
+.ed-tabs button[data-t]:hover{ color:var(--shell-ink); background:var(--shell-3); }
+.ed-tabs button[data-t].on{ background:var(--shell-3); border-color:var(--amber); color:var(--shell-ink); font-weight:600; }
+
+.ed-pane{ padding:2px 0 4px; }
+.ed-sec{ margin-bottom:24px; }
+.ed-sec > h3{
+  font-size:9.5px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--amber); font-weight:600; margin:0 0 11px;
+}
+.ed-sec > .note{ font-size:11.5px; color:var(--shell-ink-2); margin:-4px 0 11px; line-height:1.5; }
+
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+.row.tight{ gap:6px; align-items:center; }
+.fld{ display:flex; flex-direction:column; gap:4px; }
+.fld > span{ font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--shell-ink-2); }
+
+input.txt, select.txt{
+  font:inherit; font-size:12.5px; width:170px; padding:5px 8px;
+  background:var(--shell-3); color:var(--shell-ink);
+  border:1px solid var(--shell-line); border-radius:6px;
+}
+input.txt:focus, select.txt:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+input.txt.mini{ width:104px; font-family:var(--mono); }
+select.txt.xs{ width:98px; }
+input.txt.xs{ width:58px; font-family:var(--mono); }
+input.txt.zeit{ width:112px; font-family:var(--mono); }
+input.txt.wide{ width:280px; }
+input[type=color].txt{ width:44px; padding:2px; height:29px; cursor:pointer; }
+
+.ico{
+  font:inherit; font-size:13px; line-height:1; cursor:pointer;
+  width:27px; height:27px; flex:0 0 27px; border-radius:6px;
+  background:var(--shell-3); color:var(--shell-ink-2);
+  border:1px solid var(--shell-line);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.ico:hover{ background:#3a3733; color:var(--shell-ink); }
+.ico.weg:hover{ background:#5c2419; color:#ffd9cf; border-color:#7d3324; }
+
+.liste{ display:flex; flex-direction:column; gap:6px; }
+.liste .zeile{
+  display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  background:#211f1c; border:1px solid var(--shell-line);
+  border-radius:8px; padding:6px 8px;
+}
+.liste .zeile.pausenzeile{ background:#1c1b19; border-style:dashed; }
+
+/* Klassenleiste */
+.kl-leiste{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+.kl-leiste button.kl{
+  font:inherit; font-size:12.5px; cursor:pointer; padding:6px 13px; border-radius:8px;
+  background:var(--shell-3); border:1px solid var(--shell-line); color:var(--shell-ink-2);
+}
+.kl-leiste button.kl:hover{ color:var(--shell-ink); }
+.kl-leiste button.kl.on{ background:var(--amber); border-color:#c98d2e; color:#241c0c; font-weight:600; }
+
+/* Plan-Gitter */
+.pg-wrap{ overflow-x:auto; padding-bottom:6px; }
+table.pg{ border-collapse:separate; border-spacing:5px; }
+table.pg th{
+  font-size:9.5px; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--shell-ink-2); font-weight:600; padding:0 0 3px; text-align:center;
+}
+table.pg td.z{
+  font-family:var(--mono); font-size:11px; color:var(--shell-ink-2);
+  text-align:right; white-space:nowrap; padding-right:4px; vertical-align:middle;
+}
+table.pg td.z b{ color:var(--shell-ink); font-size:13px; }
+table.pg td.z small{ display:block; font-size:9.5px; color:#7a736a; }
+.pausen-strich{
+  font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:#7a736a; border-top:1px dashed var(--shell-line);
+  border-bottom:1px dashed var(--shell-line); padding:3px 8px;
+}
+.pz{
+  display:flex; flex-direction:column; gap:4px;
+  min-width:208px; padding:5px 6px 6px;
+  background:#211f1c; border:1px solid var(--shell-line);
+  border-left:3px solid #33302c; border-radius:8px;
+}
+.pz.voll{ border-left-color:var(--c,#666); background:#26241f; }
+.pz input.txt{ width:100%; }
+.pz .z2{ display:flex; gap:4px; }
+.pz .z2 input.txt{ width:0; flex:1 1 0; font-family:var(--mono); font-size:11.5px; }
+.pz .z2 select.txt{ width:50px; flex:0 0 50px; font-size:11.5px; padding:4px 2px; }
+
+.warn{
+  font-size:12px; line-height:1.55; color:#f0c98a;
+  background:#2e2418; border:1px solid #6b4c1e; border-left:3px solid var(--amber);
+  border-radius:8px; padding:10px 13px; margin:0 0 18px;
+}
+.warn b{ color:#ffe4b5; font-weight:600; }
+
+/* JSON */
 .editor textarea{
-  width:100%; height:290px; resize:vertical;
+  width:100%; height:300px; resize:vertical;
   font-family:var(--mono); font-size:12px; line-height:1.6;
   background:#141311; color:#d8d3c8; border:1px solid var(--shell-line);
   border-radius:10px; padding:14px;
 }
 .editor textarea:focus{ outline:2px solid var(--amber); outline-offset:1px; }
-.editor .ed-bar{ display:flex; gap:9px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+.ed-bar{ display:flex; gap:9px; align-items:center; margin-top:10px; flex-wrap:wrap; }
 .ed-msg{ font-size:12px; font-family:var(--mono); }
 .ed-msg.ok{ color:#8fce6a; } .ed-msg.err{ color:#ef8b6b; }
 
@@ -379,8 +494,8 @@ tr.pause td{
     <div class="grp">
       <label class="lbl">Bogen</label>
       <div class="seg" id="segOri">
-        <button data-v="portrait" aria-pressed="true">A4 hoch</button>
-        <button data-v="landscape" aria-pressed="false">A4 quer</button>
+        <button data-v="portrait" aria-pressed="false">A4 hoch</button>
+        <button data-v="landscape" aria-pressed="true">A4 quer</button>
       </div>
     </div>
 
@@ -424,7 +539,7 @@ tr.pause td{
     <div class="grp">
       <label class="chk"><input type="checkbox" id="marks"> Schnittmarken</label>
       <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
-      <label class="chk"><input type="checkbox" id="trim"> Randstunden kürzen</label>
+      <label class="chk"><input type="checkbox" id="trim" checked> Randstunden kürzen</label>
       <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
     </div>
 
@@ -445,18 +560,26 @@ tr.pause td{
     </p>
   </div>
 
-  <div class="editor" id="editor" hidden>
-    <textarea id="json" spellcheck="false"></textarea>
-    <div class="ed-bar">
-      <button class="btn primary" id="btnApply">Übernehmen</button>
-      <button class="btn" id="btnReset">Beispieldaten</button>
+</header>
+
+<section class="editor" id="editor" hidden>
+    <div class="ed-tabs" id="edTabs">
+      <button data-t="allgemein" class="on">Allgemein</button>
+      <button data-t="klassen">Klassen &amp; Pläne</button>
+      <button data-t="legende">Legende &amp; Farben</button>
+      <button data-t="json">JSON</button>
+      <span class="spacer"></span>
+      <span class="ed-msg" id="edMsg"></span>
       <button class="btn" id="btnDownload">JSON sichern</button>
       <label class="btn" for="fileIn" style="display:inline-block">JSON laden</label>
       <input type="file" id="fileIn" accept=".json,application/json" hidden>
-      <span class="ed-msg" id="edMsg"></span>
+      <button class="btn" id="btnReset">Beispieldaten</button>
     </div>
-  </div>
-</header>
+  <div class="ed-pane" id="edPane"></div>
+  <datalist id="dlFach"></datalist>
+  <datalist id="dlRaum"></datalist>
+  <datalist id="dlLehrer"></datalist>
+</section>
 
 <main class="workspace">
   <div id="pages"></div>
@@ -609,14 +732,20 @@ const FACH_FARBEN = {
   "foerderunterricht":"#4a5262", "ag":"#4a5262"
 };
 
+/* Fuer unbekannte Faecher: feste Reserve-Toene, damit immer ein Hex-Wert vorliegt */
+const RESERVE_FARBEN = ["#3b4756","#7a3b12","#155e75","#166534","#7c2d12",
+                        "#4c1d95","#0f766e","#9f1239","#334155","#6b21a8"];
+
 function fachFarbe(fach){
   if(!fach) return "#94a3b8";
+  const eigen = (DATEN && DATEN.faecher) ? DATEN.faecher[fach] : null;
+  if(eigen) return eigen;                      // im Editor gesetzte Wunschfarbe
   const f = fach.toLowerCase().trim();
   if(FACH_FARBEN[f]) return FACH_FARBEN[f];
   for(const k in FACH_FARBEN){ if(f.startsWith(k) || k.startsWith(f)) return FACH_FARBEN[k]; }
   let h = 0;
-  for(let i=0;i<f.length;i++) h = (h*31 + f.charCodeAt(i)) % 360;
-  return `hsl(${h} 50% 34%)`;
+  for(let i=0;i<f.length;i++) h = (h*31 + f.charCodeAt(i)) % 997;
+  return RESERVE_FARBEN[h % RESERVE_FARBEN.length];
 }
 
 /* ============================================================
@@ -627,9 +756,9 @@ const SPEICHER = "stundenplan.daten.v1";
 let DATEN = ladeDaten();
 
 const CONFIG = {
-  mode:"1", orientation:"portrait", farbe:true,
+  mode:"1", orientation:"landscape", farbe:true,
   cw:105, ch:140, margin:8, fontScale:100,
-  marks:false, legende:true, trim:false, fuellen:true, copies:1, zoom:100,
+  marks:false, legende:true, trim:true, fuellen:true, copies:1, zoom:100,
   auswahl:null            // null = alle
 };
 
@@ -640,9 +769,24 @@ function ladeDaten(){
   }catch(e){}
   return JSON.parse(JSON.stringify(BEISPIEL));
 }
+/* Manche Browser sperren den Zwischenspeicher fuer lokal geoeffnete Dateien
+   (Safari immer, Chrome je nach Aufruf). Dann muss der Nutzer es wissen. */
+const SPEICHER_OK = (() => {
+  try{ localStorage.setItem("__probe","1"); localStorage.removeItem("__probe"); return true; }
+  catch(e){ return false; }
+})();
+let ungesichert = false;
+
 function sichereDaten(){
-  try{ localStorage.setItem(SPEICHER, JSON.stringify(DATEN)); }catch(e){}
+  if(SPEICHER_OK){
+    try{ localStorage.setItem(SPEICHER, JSON.stringify(DATEN)); return; }catch(e){}
+  }
+  ungesichert = true;
 }
+
+window.addEventListener("beforeunload", e => {
+  if(ungesichert){ e.preventDefault(); e.returnValue = ""; }
+});
 
 /* ============================================================
    3. AUFBAU EINES PLANS
@@ -1017,36 +1161,528 @@ function aktualisiereSummary(){
     : (CONFIG.auswahl.length ? CONFIG.auswahl.join(", ") : "keine");
 }
 
-/* JSON-Editor */
+/* ============================================================
+   6. DATENEDITOR  (Formular + JSON)
+   ============================================================ */
+
 const editor = document.getElementById("editor");
-const ta = document.getElementById("json");
-const msg = document.getElementById("edMsg");
+const edPane = document.getElementById("edPane");
+const edMsg  = document.getElementById("edMsg");
+
+let edTab = "allgemein";
+let edKlasse = 0;                 // Index der gerade bearbeiteten Klasse
+
+function meldung(text, ok = true){
+  edMsg.className = "ed-msg " + (ok ? "ok" : "err");
+  edMsg.textContent = text;
+  clearTimeout(meldung._t);
+  meldung._t = setTimeout(() => { edMsg.textContent = ""; }, 4000);
+}
+
+/* Nach jeder Aenderung: sichern, Vorschau neu zeichnen,
+   bei Strukturaenderungen zusaetzlich das Formular neu aufbauen. */
+function nachAenderung(neuAufbauen){
+  sichereDaten();
+  zeichne();
+  if(neuAufbauen){ baueKlassenAuswahl(); baueEditor(); }
+  else fuelleDatenlisten();
+}
+
+/* ---------- kleine Bausteine ---------- */
+
+function eingabe(wert, beiWert, opt = {}){
+  const i = document.createElement("input");
+  i.type = opt.type || "text";
+  i.className = "txt" + (opt.cls ? " " + opt.cls : "");
+  if(opt.liste) i.setAttribute("list", opt.liste);
+  if(opt.platzhalter) i.placeholder = opt.platzhalter;
+  if(opt.titel) i.title = opt.titel;
+  i.value = wert == null ? "" : wert;
+  i.addEventListener(opt.beiBlur ? "change" : "input", () => beiWert(i.value, i));
+  return i;
+}
+
+function feld(beschriftung, wert, beiWert, opt = {}){
+  const w = el("label","fld");
+  w.append(el("span", null, beschriftung), eingabe(wert, beiWert, opt));
+  return w;
+}
+
+function ikon(zeichen, titel, fn, cls){
+  const b = el("button","ico" + (cls ? " " + cls : ""), zeichen);
+  b.type = "button"; b.title = titel;
+  b.addEventListener("click", fn);
+  return b;
+}
+
+function knopf(text, fn, primaer){
+  const b = el("button","btn" + (primaer ? " primary" : ""), text);
+  b.type = "button";
+  b.addEventListener("click", fn);
+  return b;
+}
+
+function abschnitt(titel, hinweis){
+  const d = el("div","ed-sec");
+  d.append(el("h3", null, titel));
+  if(hinweis) d.append(el("p","note", hinweis));
+  return d;
+}
+
+/* Vorschlagslisten aus dem vorhandenen Bestand */
+function fuelleDatenlisten(){
+  const faecher = new Set(), raeume = new Set(), lehrer = new Set();
+  (DATEN.klassen || []).forEach(k => Object.values(k.plan || {}).forEach(tag =>
+    Object.values(tag || {}).forEach(e => {
+      if(!e) return;
+      if(e.fach)   faecher.add(e.fach);
+      if(e.raum)   raeume.add(e.raum);
+      if(e.lehrer) lehrer.add(e.lehrer);
+    })));
+  Object.keys(DATEN.lehrkraefte || {}).forEach(k => lehrer.add(k));
+  const fuellen = (id, werte) => {
+    const dl = document.getElementById(id);
+    dl.innerHTML = "";
+    [...werte].sort((a,b) => a.localeCompare(b,"de")).forEach(v => {
+      const o = document.createElement("option"); o.value = v; dl.append(o);
+    });
+  };
+  fuellen("dlFach", faecher); fuellen("dlRaum", raeume); fuellen("dlLehrer", lehrer);
+}
+
+/* ---------- Umbenennungen sauber durchziehen ---------- */
+
+function tagKuerzelUmbenennen(alt, neu){
+  if(!neu || alt === neu) return;
+  (DATEN.klassen || []).forEach(k => {
+    if(k.plan && Object.prototype.hasOwnProperty.call(k.plan, alt)){
+      k.plan[neu] = k.plan[alt];
+      delete k.plan[alt];
+    }
+  });
+}
+
+function stundenNummerUmbenennen(alt, neu){
+  if(neu == null || String(alt) === String(neu)) return;
+  (DATEN.klassen || []).forEach(k =>
+    Object.values(k.plan || {}).forEach(tag => {
+      if(Object.prototype.hasOwnProperty.call(tag, String(alt))){
+        tag[String(neu)] = tag[String(alt)];
+        delete tag[String(alt)];
+      }
+    }));
+}
+
+function lehrerKuerzelUmbenennen(alt, neu){
+  if(!neu || alt === neu) return;
+  (DATEN.klassen || []).forEach(k =>
+    Object.values(k.plan || {}).forEach(tag =>
+      Object.values(tag || {}).forEach(e => { if(e && e.lehrer === alt) e.lehrer = neu; })));
+}
+
+/* ---------- Reiter „Allgemein“ ---------- */
+
+function paneAllgemein(){
+  const p = document.createDocumentFragment();
+
+  /* Kopfdaten */
+  const s1 = abschnitt("Kopfzeile des Plans");
+  const r1 = el("div","row");
+  r1.append(
+    feld("Schule",     DATEN.schule,     v => { DATEN.schule = v;     nachAenderung(); }, {cls:"wide"}),
+    feld("Ort",        DATEN.ort,        v => { DATEN.ort = v;        nachAenderung(); }),
+    feld("Schuljahr",  DATEN.schuljahr,  v => { DATEN.schuljahr = v;  nachAenderung(); }, {cls:"mini"}),
+    feld("gültig ab",  DATEN.gueltigAb,  v => { DATEN.gueltigAb = v;  nachAenderung(); }, {cls:"mini"})
+  );
+  s1.append(r1);
+  p.append(s1);
+
+  /* Wochentage */
+  const s2 = abschnitt("Wochentage",
+    "Das Kürzel verbindet Tag und Stundenplan. Wird es geändert, ziehen die Einträge automatisch mit um.");
+  const l2 = el("div","liste");
+  (DATEN.tage || []).forEach((t, i) => {
+    const z = el("div","zeile");
+    z.append(
+      eingabe(t.lang, v => { t.lang = v; nachAenderung(); }, {platzhalter:"Montag"}),
+      eingabe(t.kurz, v => {
+        const alt = t.kurz; t.kurz = v.trim();
+        tagKuerzelUmbenennen(alt, t.kurz);
+        nachAenderung(true);
+      }, {cls:"xs", platzhalter:"Mo", beiBlur:true, titel:"Kürzel"}),
+      el("span","spacer"),
+      ikon("↑","nach oben", () => { if(i > 0){ const a = DATEN.tage; [a[i-1],a[i]] = [a[i],a[i-1]]; nachAenderung(true); } }),
+      ikon("↓","nach unten", () => { const a = DATEN.tage; if(i < a.length-1){ [a[i+1],a[i]] = [a[i],a[i+1]]; nachAenderung(true); } }),
+      ikon("×","Tag entfernen", () => { DATEN.tage.splice(i,1); nachAenderung(true); }, "weg")
+    );
+    l2.append(z);
+  });
+  s2.append(l2, el("div","row"));
+  s2.lastChild.style.marginTop = "10px";
+  s2.lastChild.append(knopf("+ Tag", () => {
+    DATEN.tage = DATEN.tage || [];
+    DATEN.tage.push({lang:"Neuer Tag", kurz:"XX"});
+    nachAenderung(true);
+  }));
+  p.append(s2);
+
+  /* Zeitraster */
+  const s3 = abschnitt("Zeitraster",
+    "Unterrichtsstunden und Pausen in der Reihenfolge, in der sie im Plan stehen sollen.");
+  const l3 = el("div","liste");
+  (DATEN.stunden || []).forEach((st, i) => {
+    const z = el("div","zeile" + (st.pause ? " pausenzeile" : ""));
+
+    const typ = el("select","txt xs");
+    ["Stunde","Pause"].forEach(v => { const o = document.createElement("option"); o.value = o.textContent = v; typ.append(o); });
+    typ.value = st.pause ? "Pause" : "Stunde";
+    typ.addEventListener("change", () => {
+      if(typ.value === "Pause"){
+        st.pause = true; st.name = st.name || "Pause";   // nr bleibt erhalten
+      }else{
+        delete st.pause; delete st.name;
+        if(st.nr == null || st.nr === ""){
+          const nrn = (DATEN.stunden || []).filter(x => !x.pause).map(x => +x.nr).filter(n => !isNaN(n));
+          st.nr = nrn.length ? Math.max(...nrn) + 1 : 1;
+        }
+      }
+      nachAenderung(true);
+    });
+    z.append(typ);
+
+    if(st.pause){
+      z.append(eingabe(st.name, v => { st.name = v; nachAenderung(); }, {platzhalter:"Große Pause"}));
+    }else{
+      z.append(eingabe(st.nr, v => {
+        const alt = st.nr; const neu = v.trim();
+        st.nr = /^\d+$/.test(neu) ? +neu : neu;
+        stundenNummerUmbenennen(alt, st.nr);
+        nachAenderung(true);
+      }, {cls:"xs", platzhalter:"1", beiBlur:true, titel:"Nummer"}));
+    }
+
+    z.append(
+      eingabe(st.von, v => { st.von = v; nachAenderung(); }, {cls:"zeit", type:"time", titel:"Beginn"}),
+      eingabe(st.bis, v => { st.bis = v; nachAenderung(); }, {cls:"zeit", type:"time", titel:"Ende"}),
+      el("span","spacer"),
+      ikon("↑","nach oben", () => { if(i > 0){ const a = DATEN.stunden; [a[i-1],a[i]] = [a[i],a[i-1]]; nachAenderung(true); } }),
+      ikon("↓","nach unten", () => { const a = DATEN.stunden; if(i < a.length-1){ [a[i+1],a[i]] = [a[i],a[i+1]]; nachAenderung(true); } }),
+      ikon("×","Zeile entfernen", () => { DATEN.stunden.splice(i,1); nachAenderung(true); }, "weg")
+    );
+    l3.append(z);
+  });
+  const r3 = el("div","row"); r3.style.marginTop = "10px";
+  r3.append(
+    knopf("+ Stunde", () => {
+      const nrn = (DATEN.stunden || []).filter(x => !x.pause).map(x => +x.nr).filter(n => !isNaN(n));
+      DATEN.stunden.push({nr: nrn.length ? Math.max(...nrn)+1 : 1, von:"", bis:""});
+      nachAenderung(true);
+    }),
+    knopf("+ Pause", () => { DATEN.stunden.push({pause:true, name:"Pause", von:"", bis:""}); nachAenderung(true); })
+  );
+  s3.append(l3, r3);
+  p.append(s3);
+
+  return p;
+}
+
+/* ---------- Reiter „Klassen & Pläne“ ---------- */
+
+function zelleSchreiben(kl, tagKurz, nr, feldName, wert){
+  kl.plan = kl.plan || {};
+  const tag = kl.plan[tagKurz] = kl.plan[tagKurz] || {};
+  const schluessel = String(nr);
+  const e = tag[schluessel] = tag[schluessel] || {};
+  if(wert === "" || wert == null) delete e[feldName]; else e[feldName] = wert;
+  if(!e.fach && !e.raum && !e.lehrer && !e.hinweis) delete tag[schluessel];
+}
+
+function paneKlassen(){
+  const p = document.createDocumentFragment();
+  const klassen = DATEN.klassen || [];
+  if(edKlasse >= klassen.length) edKlasse = Math.max(0, klassen.length - 1);
+
+  /* Auswahlleiste */
+  const leiste = el("div","kl-leiste");
+  klassen.forEach((k, i) => {
+    const b = el("button","kl" + (i === edKlasse ? " on" : ""), k.klasse || "?");
+    b.type = "button";
+    b.addEventListener("click", () => { edKlasse = i; baueEditor(); });
+    leiste.append(b);
+  });
+  leiste.append(
+    knopf("+ Neue Klasse", () => {
+      DATEN.klassen = DATEN.klassen || [];
+      DATEN.klassen.push({klasse:"Neu", klassenleitung:"", raum:"", plan:{}});
+      edKlasse = DATEN.klassen.length - 1;
+      CONFIG.auswahl = null;
+      nachAenderung(true);
+    }),
+    knopf("Duplizieren", () => {
+      if(!klassen.length) return;
+      const kopie = JSON.parse(JSON.stringify(klassen[edKlasse]));
+      kopie.klasse = (kopie.klasse || "") + " (Kopie)";
+      DATEN.klassen.splice(edKlasse + 1, 0, kopie);
+      edKlasse++; CONFIG.auswahl = null;
+      nachAenderung(true);
+    }),
+    knopf("Löschen", () => {
+      if(!klassen.length) return;
+      if(!confirm("Klasse „" + (klassen[edKlasse].klasse || "?") + "“ mitsamt Plan löschen?")) return;
+      DATEN.klassen.splice(edKlasse, 1);
+      edKlasse = Math.max(0, edKlasse - 1);
+      CONFIG.auswahl = null;
+      nachAenderung(true);
+    })
+  );
+  p.append(leiste);
+
+  if(!klassen.length){
+    const leer = el("p","note","Noch keine Klasse angelegt.");
+    p.append(leer);
+    return p;
+  }
+
+  const kl = klassen[edKlasse];
+
+  /* Stammdaten der Klasse */
+  const s1 = abschnitt("Stammdaten");
+  const r1 = el("div","row");
+  r1.append(
+    feld("Klasse", kl.klasse, v => {
+      const alt = kl.klasse; kl.klasse = v;
+      if(CONFIG.auswahl){
+        const j = CONFIG.auswahl.indexOf(alt);
+        if(j >= 0) CONFIG.auswahl[j] = v;
+      }
+      sichereDaten(); zeichne(); baueKlassenAuswahl();
+      leiste.children[edKlasse].textContent = v || "?";
+    }, {cls:"mini"}),
+    feld("Klassenleitung", kl.klassenleitung, v => { kl.klassenleitung = v; nachAenderung(); }),
+    feld("Klassenraum", kl.raum, v => { kl.raum = v; nachAenderung(); }, {cls:"mini"})
+  );
+  s1.append(r1);
+  p.append(s1);
+
+  /* Das Gitter */
+  const s2 = abschnitt("Stundenplan " + (kl.klasse || ""),
+    "Fach leer lassen = Freistunde. „Dauer“ verbindet die Zelle mit den folgenden Stunden zur Doppel- oder Blockstunde.");
+  const wrap = el("div","pg-wrap");
+  const tab = el("table","pg");
+  const tage = DATEN.tage || [], stunden = DATEN.stunden || [];
+
+  const thead = el("thead"), htr = el("tr");
+  htr.append(el("th", null, ""));
+  tage.forEach(t => htr.append(el("th", null, t.lang || t.kurz)));
+  thead.append(htr); tab.append(thead);
+
+  const tbody = el("tbody");
+  stunden.forEach(st => {
+    const tr = el("tr");
+    if(st.pause){
+      const td = el("td"); td.colSpan = tage.length + 1;
+      const strich = el("div","pausen-strich",
+        (st.name || "Pause") + (st.von && st.bis ? "   " + st.von + " – " + st.bis : ""));
+      td.append(strich); tr.append(td); tbody.append(tr);
+      return;
+    }
+
+    const tdZ = el("td","z");
+    tdZ.append(el("b", null, String(st.nr ?? "")));
+    if(st.von || st.bis) tdZ.append(el("small", null, (st.von || "") + "–" + (st.bis || "")));
+    tr.append(tdZ);
+
+    tage.forEach(t => {
+      const kurz = t.kurz || t.lang;
+      const tag = (kl.plan || {})[kurz] || {};
+      const e = tag[String(st.nr)] || {};
+
+      const td = el("td");
+      const box = el("div","pz" + (e.fach ? " voll" : ""));
+      if(e.fach) box.style.setProperty("--c", fachFarbe(e.fach));
+
+      box.append(eingabe(e.fach, v => {
+        zelleSchreiben(kl, kurz, st.nr, "fach", v.trim());
+        box.classList.toggle("voll", !!v.trim());
+        box.style.setProperty("--c", v.trim() ? fachFarbe(v.trim()) : "");
+        nachAenderung();
+      }, {liste:"dlFach", platzhalter:"Fach"}));
+
+      const z2 = el("div","z2");
+      z2.append(
+        eingabe(e.raum,   v => { zelleSchreiben(kl, kurz, st.nr, "raum",   v.trim()); nachAenderung(); }, {liste:"dlRaum", platzhalter:"Raum"}),
+        eingabe(e.lehrer, v => { zelleSchreiben(kl, kurz, st.nr, "lehrer", v.trim()); nachAenderung(); }, {liste:"dlLehrer", platzhalter:"Lk"})
+      );
+
+      const dauer = el("select","txt");
+      [1,2,3].forEach(n => {
+        const o = document.createElement("option");
+        o.value = n; o.textContent = "×" + n; dauer.append(o);
+      });
+      dauer.value = String(Math.max(1, parseInt(e.dauer || 1, 10)));
+      dauer.title = "Dauer in Stunden";
+      dauer.addEventListener("change", () => {
+        const n = +dauer.value;
+        zelleSchreiben(kl, kurz, st.nr, "dauer", n > 1 ? n : "");
+        nachAenderung();
+      });
+      z2.append(dauer);
+
+      box.append(z2);
+      td.append(box);
+      tr.append(td);
+    });
+
+    tbody.append(tr);
+  });
+
+  tab.append(tbody);
+  wrap.append(tab);
+  s2.append(wrap);
+  p.append(s2);
+
+  return p;
+}
+
+/* ---------- Reiter „Legende & Farben“ ---------- */
+
+function paneLegende(){
+  const p = document.createDocumentFragment();
+
+  /* Lehrkräfte */
+  const s1 = abschnitt("Lehrkräfte",
+    "Kürzel stehen in den Zellen, die Langform erscheint in der Fußzeile. Ein geändertes Kürzel wird in allen Plänen mitgezogen.");
+  DATEN.lehrkraefte = DATEN.lehrkraefte || {};
+  const l1 = el("div","liste");
+  Object.keys(DATEN.lehrkraefte).forEach(kuerzel => {
+    const z = el("div","zeile");
+    z.append(
+      eingabe(kuerzel, v => {
+        const neu = v.trim();
+        if(!neu || neu === kuerzel) return;
+        const werte = DATEN.lehrkraefte;
+        const neueMap = {};
+        Object.keys(werte).forEach(k => { neueMap[k === kuerzel ? neu : k] = werte[k]; });
+        DATEN.lehrkraefte = neueMap;
+        lehrerKuerzelUmbenennen(kuerzel, neu);
+        nachAenderung(true);
+      }, {cls:"xs", beiBlur:true, titel:"Kürzel"}),
+      eingabe(DATEN.lehrkraefte[kuerzel], v => { DATEN.lehrkraefte[kuerzel] = v; nachAenderung(); }, {platzhalter:"Nachname"}),
+      el("span","spacer"),
+      ikon("×","Eintrag entfernen", () => { delete DATEN.lehrkraefte[kuerzel]; nachAenderung(true); }, "weg")
+    );
+    l1.append(z);
+  });
+  const r1 = el("div","row"); r1.style.marginTop = "10px";
+  r1.append(knopf("+ Eintrag", () => {
+    let n = 1; while(DATEN.lehrkraefte["NEU" + n]) n++;
+    DATEN.lehrkraefte["NEU" + n] = "";
+    nachAenderung(true);
+  }));
+  s1.append(l1, r1);
+  p.append(s1);
+
+  /* Fächer & Farben */
+  const benutzt = new Set();
+  (DATEN.klassen || []).forEach(k => Object.values(k.plan || {}).forEach(tag =>
+    Object.values(tag || {}).forEach(e => { if(e && e.fach) benutzt.add(e.fach); })));
+
+  const s2 = abschnitt("Fächer & Farben",
+    "Gilt für alle Klassen. Ohne eigene Angabe wählt die Vorlage automatisch einen Ton zum Fachnamen.");
+  DATEN.faecher = DATEN.faecher || {};
+  const l2 = el("div","liste");
+  [...benutzt].sort((a,b) => a.localeCompare(b,"de")).forEach(fach => {
+    const z = el("div","zeile");
+    const eigen = !!DATEN.faecher[fach];
+    z.append(
+      eingabe(fachFarbe(fach), v => { DATEN.faecher[fach] = v; nachAenderung(); }, {type:"color", titel:"Farbe wählen"}),
+      el("span","fachname", fach),
+      el("span","spacer"),
+      el("span","fachstatus", eigen ? "eigene Farbe" : "automatisch")
+    );
+    if(eigen) z.append(ikon("↺","auf automatisch zurücksetzen", () => { delete DATEN.faecher[fach]; nachAenderung(true); }));
+    l2.append(z);
+  });
+  if(!benutzt.size) l2.append(el("p","note","Noch keine Fächer eingetragen."));
+  s2.append(l2);
+  p.append(s2);
+
+  return p;
+}
+
+/* ---------- Reiter „JSON“ ---------- */
+
+function paneJson(){
+  const p = document.createDocumentFragment();
+  const s = abschnitt("Rohdaten",
+    "Für Massenänderungen und den Austausch zwischen Rechnern. „Übernehmen“ prüft die Struktur, bevor sie gesetzt wird.");
+  const ta = document.createElement("textarea");
+  ta.id = "json"; ta.spellcheck = false;
+  ta.value = JSON.stringify(DATEN, null, 2);
+  const bar = el("div","ed-bar");
+  bar.append(knopf("Übernehmen", () => {
+    try{
+      const neu = JSON.parse(ta.value);
+      if(!Array.isArray(neu.klassen)) throw new Error("Feld „klassen“ fehlt oder ist keine Liste.");
+      if(!Array.isArray(neu.stunden)) throw new Error("Feld „stunden“ fehlt oder ist keine Liste.");
+      if(!Array.isArray(neu.tage))    throw new Error("Feld „tage“ fehlt oder ist keine Liste.");
+      DATEN = neu; CONFIG.auswahl = null; edKlasse = 0;
+      nachAenderung(true);
+      meldung("✓ übernommen und gespeichert");
+    }catch(err){
+      meldung("Fehler: " + err.message, false);
+    }
+  }, true));
+  s.append(ta, bar);
+  p.append(s);
+  return p;
+}
+
+/* ---------- Aufbau & Reiterwechsel ---------- */
+
+function baueEditor(){
+  if(editor.hidden) return;
+  fuelleDatenlisten();
+  edPane.innerHTML = "";
+  if(!SPEICHER_OK){
+    const w = el("p","warn");
+    w.innerHTML = "<b>Kein Zwischenspeicher verfügbar.</b> Dieser Browser erlaubt geöffneten " +
+      "Dateien keinen lokalen Speicher — Änderungen sind nach dem Neuladen weg. " +
+      "Mit <b>JSON sichern</b> eine Datei anlegen und später über <b>JSON laden</b> zurückholen.";
+    edPane.append(w);
+  }
+  edPane.append(
+    edTab === "allgemein" ? paneAllgemein() :
+    edTab === "klassen"   ? paneKlassen()   :
+    edTab === "legende"   ? paneLegende()   :
+                            paneJson()
+  );
+}
+
+document.getElementById("edTabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-t]");
+  if(!b) return;
+  edTab = b.dataset.t;
+  [...document.querySelectorAll("#edTabs button[data-t]")]
+    .forEach(x => x.classList.toggle("on", x === b));
+  baueEditor();
+});
 
 document.getElementById("btnEdit").addEventListener("click", () => {
   editor.hidden = !editor.hidden;
-  if(!editor.hidden){ ta.value = JSON.stringify(DATEN, null, 2); msg.textContent = ""; ta.focus(); }
+  document.body.classList.toggle("editor-offen", !editor.hidden);
+  if(!editor.hidden){ baueEditor(); editor.scrollIntoView({block:"start", behavior:"smooth"}); }
 });
-document.getElementById("btnApply").addEventListener("click", () => {
-  try{
-    const neu = JSON.parse(ta.value);
-    if(!Array.isArray(neu.klassen)) throw new Error("Feld „klassen“ fehlt oder ist keine Liste.");
-    if(!Array.isArray(neu.stunden)) throw new Error("Feld „stunden“ fehlt oder ist keine Liste.");
-    if(!Array.isArray(neu.tage))    throw new Error("Feld „tage“ fehlt oder ist keine Liste.");
-    DATEN = neu; CONFIG.auswahl = null;
-    sichereDaten(); baueKlassenAuswahl(); zeichne();
-    msg.className = "ed-msg ok"; msg.textContent = "✓ übernommen und gespeichert";
-  }catch(err){
-    msg.className = "ed-msg err"; msg.textContent = "Fehler: " + err.message;
-  }
-});
+
 document.getElementById("btnReset").addEventListener("click", () => {
+  if(!confirm("Alle Eingaben verwerfen und die Beispieldaten laden?")) return;
   DATEN = JSON.parse(JSON.stringify(BEISPIEL));
-  CONFIG.auswahl = null;
+  CONFIG.auswahl = null; edKlasse = 0;
   try{ localStorage.removeItem(SPEICHER); }catch(e){}
-  ta.value = JSON.stringify(DATEN, null, 2);
-  baueKlassenAuswahl(); zeichne();
-  msg.className = "ed-msg ok"; msg.textContent = "✓ Beispieldaten wiederhergestellt";
+  nachAenderung(true);
+  meldung("✓ Beispieldaten wiederhergestellt");
 });
+
 document.getElementById("btnDownload").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(DATEN, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
@@ -1054,12 +1690,32 @@ document.getElementById("btnDownload").addEventListener("click", () => {
   a.download = "stundenplan-daten.json";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  meldung("✓ als stundenplan-daten.json gesichert");
 });
+
 document.getElementById("fileIn").addEventListener("change", e => {
-  const f = e.target.files[0]; if(!f) return;
+  const f = e.target.files[0];
+  if(!f) return;
   const r = new FileReader();
-  r.onload = () => { ta.value = r.result; editor.hidden = false; document.getElementById("btnApply").click(); };
+  r.onload = () => {
+    try{
+      const neu = JSON.parse(r.result);
+      if(!Array.isArray(neu.klassen) || !Array.isArray(neu.stunden) || !Array.isArray(neu.tage))
+        throw new Error("Datei enthält keinen vollständigen Stundenplan.");
+      DATEN = neu; CONFIG.auswahl = null; edKlasse = 0;
+      editor.hidden = false;
+      document.body.classList.add("editor-offen");
+      nachAenderung(true);
+      meldung("✓ " + f.name + " geladen");
+    }catch(err){
+      editor.hidden = false;
+      document.body.classList.add("editor-offen");
+      baueEditor();
+      meldung("Fehler: " + err.message, false);
+    }
+  };
   r.readAsText(f);
+  e.target.value = "";
 });
 
 /* Ansicht automatisch einpassen */
