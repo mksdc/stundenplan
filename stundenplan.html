@@ -583,7 +583,7 @@ tr.pause td{
       <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
       <label class="chk"><input type="checkbox" id="trim" checked> Randstunden kürzen</label>
       <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
-      <label class="chk" title="Lässt unten 20 mm frei, damit die vom Browser aufgedruckte Fußzeile den Plan nicht überdeckt und der Bogen in den Druckbereich passt. Safari unter iOS bricht sonst auf eine zweite Seite um — dort angehakt lassen."><input type="checkbox" id="browserrand" checked> Rand für Browser-Fußzeile</label>
+      <label class="chk" title="Lässt unten 30 mm frei, damit die vom Browser aufgedruckte Fußzeile den Plan nicht überdeckt und der Bogen in den Druckbereich passt. Safari unter iOS bricht sonst auf eine zweite Seite um — dort angehakt lassen."><input type="checkbox" id="browserrand" checked> Rand für Browser-Fußzeile</label>
     </div>
 
     <div class="spacer"></div>
@@ -1032,7 +1032,7 @@ function planKarte(kl, u){
    Wichtiger noch: der Bogen selbst wird um diesen Betrag niedriger. Ein
    Bogen in voller A4-Hoehe passt nicht in den Druckbereich, den iOS uebrig
    laesst, und wird auf eine zweite Seite umgebrochen.                      */
-const BROWSERRAND_MM = 20;
+const BROWSERRAND_MM = 30;
 
 function rechneLayout(){
   const P = CONFIG.orientation === "landscape" ? {w:297, h:210} : {w:210, h:297};
