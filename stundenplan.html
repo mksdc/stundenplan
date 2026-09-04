@@ -267,8 +267,8 @@ table.pg td.z small{ display:block; font-size:9.5px; color:#7a736a; }
 
 /* Ziehen & Ablegen (Klassen und Plan-Zellen tauschen die Plaetze) */
 .griff{
-  flex:0 0 auto; cursor:grab; user-select:none;
-  font-size:14px; line-height:1; color:#6d665c; padding:2px 1px;
+  flex:0 0 auto; cursor:grab; user-select:none; touch-action:none;
+  font-size:14px; line-height:1; color:#6d665c; padding:2px 4px;
 }
 .griff:hover{ color:var(--amber); }
 .griff:active{ cursor:grabbing; }
@@ -278,6 +278,15 @@ table.pg td.z small{ display:block; font-size:9.5px; color:#7a736a; }
   background:#2f2a20;
 }
 .kl-leiste button.kl.drag-ziel{ outline:2px dashed var(--amber); outline-offset:2px; }
+
+/* Mitgezogenes Abbild */
+.dnd-geist{
+  position:fixed; left:0; top:0; z-index:900; pointer-events:none;
+  opacity:.92; box-shadow:0 20px 44px -14px rgba(0,0,0,.85);
+  border-radius:8px; overflow:hidden;
+}
+body.dnd-laeuft{ user-select:none; cursor:grabbing; }
+body.dnd-laeuft .griff{ cursor:grabbing; }
 .kl-leiste button.kl .griff{ display:inline-block; margin-right:5px; font-size:12px; vertical-align:-1px; }
 
 .warn{
@@ -1434,8 +1443,6 @@ function zelleSchreiben(kl, tagKurz, nr, feldName, wert){
    Quelle und Ziel tauschen ihre Plaetze — sowohl bei den Klassen
    als auch bei den Zellen des Stundenplans.                       */
 
-let dndZug = null;            // {art:"klasse"|"zelle", ...} waehrend des Ziehens
-
 function zelleLesen(kl, tagKurz, nr){
   return ((kl.plan || {})[tagKurz] || {})[String(nr)] || null;
 }
@@ -1460,38 +1467,152 @@ function griff(titel){
   return g;
 }
 
+/* Ziehen laeuft ueber Pointer-Events, damit Maus, Stift und Finger
+   denselben Weg nehmen. Die HTML5-Drag-API kennt kein Touch.        */
+
+const DND_SCHWELLE = 6;      // px, ab denen aus dem Tippen ein Zug wird
+const DND_RAND     = 56;     // px vom Rand, ab denen mitgescrollt wird
+const DND_TEMPO    = 16;     // px je Bild beim Randscrollen
+
+let dndAktiv = null;         // {zug, bildEl, geist, wrap, x, y, zielEl, raf}
+
 /* Griff wird zur Ziehquelle; gezeigt wird beim Ziehen das ganze Kaestchen. */
 function dndQuelle(griffEl, bildEl, zug){
-  griffEl.draggable = true;
-  griffEl.addEventListener("dragstart", ev => {
-    dndZug = zug;
-    ev.dataTransfer.effectAllowed = "move";
-    try{ ev.dataTransfer.setData("text/plain", zug.art); }catch(e){}
-    if(ev.dataTransfer.setDragImage) ev.dataTransfer.setDragImage(bildEl, 20, 16);
-    setTimeout(() => bildEl.classList.add("drag-quelle"), 0);
+  griffEl.addEventListener("pointerdown", ev => {
+    if(ev.button > 0) return;                 // nur linke Taste / Finger / Stift
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const start = {x:ev.clientX, y:ev.clientY};
+    let gestartet = false;
+    try{ griffEl.setPointerCapture(ev.pointerId); }catch(e){}
+
+    const bewegen = e => {
+      if(e.pointerId !== ev.pointerId) return;
+      if(!gestartet){
+        if(Math.hypot(e.clientX - start.x, e.clientY - start.y) < DND_SCHWELLE) return;
+        gestartet = true;
+        dndBeginnen(zug, bildEl, e.clientX, e.clientY);
+      }
+      dndBewegen(e.clientX, e.clientY);
+    };
+    const loslassen = e => {
+      if(e.pointerId !== ev.pointerId) return;
+      beenden();
+      if(gestartet) dndAblegen();
+    };
+    const abbrechen = e => {
+      if(e && e.pointerId !== ev.pointerId) return;
+      beenden(); dndAufraeumen();
+    };
+    const taste = e => { if(e.key === "Escape") abbrechen(); };
+
+    function beenden(){
+      try{ griffEl.releasePointerCapture(ev.pointerId); }catch(e){}
+      griffEl.removeEventListener("pointermove", bewegen);
+      griffEl.removeEventListener("pointerup", loslassen);
+      griffEl.removeEventListener("pointercancel", abbrechen);
+      window.removeEventListener("keydown", taste);
+    }
+    griffEl.addEventListener("pointermove", bewegen);
+    griffEl.addEventListener("pointerup", loslassen);
+    griffEl.addEventListener("pointercancel", abbrechen);
+    window.addEventListener("keydown", taste);
   });
-  griffEl.addEventListener("dragend", dndAufraeumen);
 }
 
+/* Ziele merken sich ihre Regeln direkt am Knoten. */
 function dndZiel(boxEl, art, istSelbst, beiAblegen){
-  boxEl.addEventListener("dragover", ev => {
-    if(!dndZug || dndZug.art !== art || istSelbst(dndZug)) return;
-    ev.preventDefault();
-    ev.dataTransfer.dropEffect = "move";
-    boxEl.classList.add("drag-ziel");
-  });
-  boxEl.addEventListener("dragleave", () => boxEl.classList.remove("drag-ziel"));
-  boxEl.addEventListener("drop", ev => {
-    if(!dndZug || dndZug.art !== art || istSelbst(dndZug)) return;
-    ev.preventDefault(); ev.stopPropagation();
-    const zug = dndZug;
-    dndAufraeumen();
-    beiAblegen(zug);
-  });
+  boxEl._dnd = {art, istSelbst, beiAblegen};
+}
+
+function dndBeginnen(zug, bildEl, x, y){
+  const r = bildEl.getBoundingClientRect();
+  const geist = bildEl.cloneNode(true);
+  const quellFelder = bildEl.querySelectorAll("input, select");
+  geist.querySelectorAll("input, select")
+    .forEach((n, i) => { if(quellFelder[i]) n.value = quellFelder[i].value; });
+  geist.classList.add("dnd-geist");
+  geist.style.width  = r.width + "px";
+  geist.style.height = r.height + "px";
+  document.body.append(geist);
+
+  bildEl.classList.add("drag-quelle");
+  document.body.classList.add("dnd-laeuft");
+
+  dndAktiv = {
+    zug, bildEl, geist, zielEl:null,
+    griffX: x - r.left, griffY: y - r.top,
+    wrap: bildEl.closest(".pg-wrap"),
+    x, y, raf:0
+  };
+  dndAktiv.raf = requestAnimationFrame(dndScrollSchritt);
+  dndBewegen(x, y);
+}
+
+function dndBewegen(x, y){
+  const a = dndAktiv;
+  if(!a) return;
+  a.x = x; a.y = y;
+  a.geist.style.left = (x - a.griffX) + "px";
+  a.geist.style.top  = (y - a.griffY) + "px";
+
+  const ziel = dndZielUnter(x, y);
+  if(ziel !== a.zielEl){
+    if(a.zielEl) a.zielEl.classList.remove("drag-ziel");
+    a.zielEl = ziel;
+    if(ziel) ziel.classList.add("drag-ziel");
+  }
+}
+
+/* Knoten unter dem Zeiger suchen, der ein passendes Ziel ist.
+   Der Geist selbst faengt nichts ab (pointer-events:none).       */
+function dndZielUnter(x, y){
+  const a = dndAktiv;
+  let n = document.elementFromPoint(x, y);
+  while(n){
+    if(n._dnd && n._dnd.art === a.zug.art && !n._dnd.istSelbst(a.zug)) return n;
+    n = n.parentElement;
+  }
+  return null;
+}
+
+/* Am Rand des Fensters bzw. des Plangitters weiterschieben. */
+function dndScrollSchritt(){
+  const a = dndAktiv;
+  if(!a) return;
+  let verschoben = false;
+
+  if(a.y < DND_RAND){                         window.scrollBy(0, -DND_TEMPO); verschoben = true; }
+  else if(a.y > innerHeight - DND_RAND){      window.scrollBy(0,  DND_TEMPO); verschoben = true; }
+
+  if(a.wrap && a.wrap.scrollWidth > a.wrap.clientWidth){
+    const r = a.wrap.getBoundingClientRect();
+    if(a.y > r.top && a.y < r.bottom){
+      if(a.x < r.left + DND_RAND){       a.wrap.scrollLeft -= DND_TEMPO; verschoben = true; }
+      else if(a.x > r.right - DND_RAND){ a.wrap.scrollLeft += DND_TEMPO; verschoben = true; }
+    }
+  }
+  if(verschoben) dndBewegen(a.x, a.y);        // Ziel unter dem Zeiger neu bestimmen
+  a.raf = requestAnimationFrame(dndScrollSchritt);
+}
+
+function dndAblegen(){
+  const a = dndAktiv;
+  if(!a) return;
+  const ziel = a.zielEl, zug = a.zug;
+  dndAufraeumen();
+  if(ziel && ziel._dnd) ziel._dnd.beiAblegen(zug);
 }
 
 function dndAufraeumen(){
-  dndZug = null;
+  const a = dndAktiv;
+  if(a){
+    cancelAnimationFrame(a.raf);
+    a.geist.remove();
+    dndAktiv = null;
+  }
+  document.body.classList.remove("dnd-laeuft");
   document.querySelectorAll(".drag-quelle, .drag-ziel")
     .forEach(n => n.classList.remove("drag-quelle","drag-ziel"));
 }
