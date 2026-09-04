@@ -583,7 +583,7 @@ tr.pause td{
       <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
       <label class="chk"><input type="checkbox" id="trim" checked> Randstunden kürzen</label>
       <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
-      <label class="chk" title="Lässt oben und unten je 12 mm frei, damit die vom Browser aufgedruckte Kopf- und Fußzeile (Datum, Titel, Adresse, Seitenzahl) den Plan nicht überdeckt. Safari unter iOS lässt sie sich nicht abschalten — dort angehakt lassen."><input type="checkbox" id="browserrand" checked> Rand für Kopf- und Fußzeile</label>
+      <label class="chk" title="Lässt unten 20 mm frei, damit die vom Browser aufgedruckte Fußzeile den Plan nicht überdeckt und der Bogen in den Druckbereich passt. Safari unter iOS bricht sonst auf eine zweite Seite um — dort angehakt lassen."><input type="checkbox" id="browserrand" checked> Rand für Browser-Fußzeile</label>
     </div>
 
     <div class="spacer"></div>
@@ -599,7 +599,7 @@ tr.pause td{
     <p class="hint">
       <b>Druckdialog:</b> Ränder auf <b>Keine</b> stellen, <b>Hintergrundgrafiken</b> aktivieren,
       Kopf- und Fußzeilen abschalten, Skalierung <b>100 %</b>. Das Seitenformat (A4 hoch/quer) setzt die Vorlage selbst.
-      <b>iPhone und iPad:</b> Safari druckt Kopf- und Fußzeile immer mit — dafür <b>Rand für Kopf- und Fußzeile</b> angehakt lassen.
+      <b>iPhone und iPad:</b> Safari druckt seine Fußzeile immer mit und bricht volle A4-Bögen auf zwei Seiten um — dafür <b>Rand für Browser-Fußzeile</b> angehakt lassen.
     </p>
   </div>
   </div></div>
@@ -1027,16 +1027,18 @@ function planKarte(kl, u){
    4. SEITENAUFTEILUNG (Nutzen)
    ============================================================ */
 
-/* Safari unter iOS druckt immer eine Kopf- und eine Fusszeile (Datum, Titel,
-   Adresse, Seitenzahl) und laesst sie sich nicht abschalten. Sie liegen
-   sonst ueber dem Plan — darum oben wie unten denselben Streifen freilassen. */
-const BROWSERRAND_MM = 12;
+/* Safari unter iOS druckt immer eine Fusszeile (Adresse, Seitenzahl) und
+   laesst sie sich nicht abschalten. Sie wuerde sonst ueber dem Plan liegen.
+   Wichtiger noch: der Bogen selbst wird um diesen Betrag niedriger. Ein
+   Bogen in voller A4-Hoehe passt nicht in den Druckbereich, den iOS uebrig
+   laesst, und wird auf eine zweite Seite umgebrochen.                      */
+const BROWSERRAND_MM = 20;
 
 function rechneLayout(){
   const P = CONFIG.orientation === "landscape" ? {w:297, h:210} : {w:210, h:297};
   const M = Math.min(25, Math.max(0, CONFIG.margin));
   const F = CONFIG.browserrand ? BROWSERRAND_MM : 0;
-  const druckW = P.w - 2*M, druckH = P.h - 2*M - 2*F;
+  const druckW = P.w - 2*M, druckH = P.h - 2*M - F;
 
   let cols, rows, slotW, slotH;
 
@@ -1100,8 +1102,8 @@ function zeichne(){
   for(let i = 0; i < items.length; i += L.proSeite){
     const sheet = el("div","sheet" + (CONFIG.marks ? " marks" : ""));
     sheet.style.width  = L.P.w + "mm";
-    sheet.style.height = (L.P.h - 0.1) + "mm";   // Sicherheitsabzug gegen Leerseiten
-    sheet.style.padding = (L.M + L.F) + "mm " + L.M + "mm";
+    sheet.style.height = (L.P.h - 0.1 - L.F) + "mm";   // Sicherheitsabzug gegen Leerseiten
+    sheet.style.padding = L.M + "mm";
 
     const grid = el("div","sheet-grid");
     grid.style.gridTemplateColumns = `repeat(${L.cols}, ${L.slotW}mm)`;
