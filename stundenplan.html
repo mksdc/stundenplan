@@ -101,6 +101,14 @@ input[type=number], input[type=text]{
 input[type=number]:focus, input[type=text]:focus{ outline:2px solid var(--amber); outline-offset:1px; }
 input[type=range]{ accent-color:var(--amber); width:120px; }
 
+select.sel{
+  font:inherit; font-size:12.5px;
+  padding:5px 7px;
+  background:var(--shell-3); color:var(--shell-ink);
+  border:1px solid var(--shell-line); border-radius:6px;
+}
+select.sel:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+
 .chk{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--shell-ink-2); cursor:pointer; user-select:none; white-space:nowrap; }
 .chk input{ accent-color:var(--amber); width:14px; height:14px; }
 .chk:hover{ color:var(--shell-ink); }
@@ -335,7 +343,8 @@ body.dnd-laeuft .griff{ cursor:grabbing; }
   height:100%; width:100%;
   display:flex; flex-direction:column;
   color:var(--ink);
-  font-size:calc(var(--u,1) * 5mm);
+  font-family:var(--sans);                 /* nimmt die Schrift des Themas auf */
+  font-size:calc(var(--u,1) * 5mm * var(--t-mass,1));
   line-height:1.25;
 }
 
@@ -486,6 +495,54 @@ tr.pause td{
 }
 .plan.tiny .legende{ display:none; }
 
+/* ============================ SCHRIFT-THEMEN ============================
+   Die Themen setzen nur Schriftart und Grundgroesse des Plans — Aufbau,
+   Farben und Masse bleiben gleich. Alle Stapel enden bei Schriften, die
+   macOS und iOS mitbringen, damit auch ohne Netz nichts einbricht.       */
+
+body[data-theme="klassisch"] .plan{
+  --sans:"Iowan Old Style", Georgia, "Times New Roman", serif;
+  --serif:"Iowan Old Style", Georgia, "Times New Roman", serif;
+  --mono:"Courier New", Courier, monospace;
+  --t-mass:1.02;
+}
+body[data-theme="verspielt"] .plan{
+  --sans:"Chalkboard SE", "Comic Sans MS", "Marker Felt", cursive;
+  --serif:"Chalkboard SE", "Comic Sans MS", "Marker Felt", cursive;
+  --mono:"Chalkboard SE", "Comic Sans MS", monospace;
+  --t-mass:.92;
+}
+body[data-theme="minimalistisch"] .plan{
+  --sans:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  --serif:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  --t-mass:.94;
+}
+body[data-theme="einfach"] .plan{
+  --sans:Verdana, Geneva, "DejaVu Sans", sans-serif;
+  --serif:Verdana, Geneva, "DejaVu Sans", sans-serif;
+  --mono:Verdana, Geneva, monospace;
+  --t-mass:.94;
+}
+body[data-theme="experimentell"] .plan{
+  --sans:"Avenir Next Condensed", Futura, "Gill Sans", "Trebuchet MS", sans-serif;
+  --serif:Copperplate, "Avenir Next Condensed", Futura, fantasy;
+  --mono:"Courier New", Courier, monospace;
+  --t-mass:1.06;
+}
+body[data-theme="excel"] .plan{
+  --sans:Calibri, Aptos, "Segoe UI", Arial, Helvetica, sans-serif;
+  --serif:Calibri, Aptos, "Segoe UI", Arial, Helvetica, sans-serif;
+  --mono:Consolas, "Courier New", monospace;
+  --t-mass:.98;
+}
+body[data-theme="handschrift"] .plan{
+  --sans:"Bradley Hand", Noteworthy, "Marker Felt", "Segoe Script", cursive;
+  --serif:Noteworthy, "Bradley Hand", "Marker Felt", cursive;
+  --mono:"Bradley Hand", Noteworthy, cursive;
+  --t-mass:1.04;
+}
+
 /* Graustufen */
 .mono-print .cell{ background:#f3f3f4 !important; border-left-color:#3f4046 !important; }
 .mono-print td.leer .cell{ background:repeating-linear-gradient(135deg,#fafafa 0 3px,#f3f3f3 3px 6px) !important; border-left-color:#e4e4e6 !important; }
@@ -573,6 +630,20 @@ tr.pause td{
     </div>
 
     <div class="grp">
+      <label class="lbl">Thema</label>
+      <select class="sel" id="theme" title="Ändert nur Schriftart und Grundgröße des Plans">
+        <option value="modern">Modern</option>
+        <option value="klassisch">Klassisch</option>
+        <option value="verspielt">Verspielt</option>
+        <option value="minimalistisch">Minimalistisch</option>
+        <option value="einfach">Einfach</option>
+        <option value="experimentell">Experimentell</option>
+        <option value="excel">Excel</option>
+        <option value="handschrift">Handschrift</option>
+      </select>
+    </div>
+
+    <div class="grp">
       <label class="lbl">Schrift</label>
       <input type="range" id="fs" min="70" max="135" step="1" value="100">
       <span class="val" id="fsVal">100 %</span>
@@ -583,7 +654,7 @@ tr.pause td{
       <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
       <label class="chk"><input type="checkbox" id="trim" checked> Randstunden kürzen</label>
       <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
-      <label class="chk" title="Lässt unten 30 mm frei, damit die vom Browser aufgedruckte Fußzeile den Plan nicht überdeckt und der Bogen in den Druckbereich passt. Safari unter iOS bricht sonst auf eine zweite Seite um — dort angehakt lassen."><input type="checkbox" id="browserrand" checked> Rand für Browser-Fußzeile</label>
+      <label class="chk" title="Lässt unten 30 mm frei, damit die vom Browser aufgedruckte Fußzeile den Plan nicht überdeckt und der Bogen in den Druckbereich passt. Safari unter iOS bricht sonst auf eine zweite Seite um — dort anhaken."><input type="checkbox" id="browserrand"> Rand für Browser-Fußzeile</label>
     </div>
 
     <div class="spacer"></div>
@@ -599,7 +670,7 @@ tr.pause td{
     <p class="hint">
       <b>Druckdialog:</b> Ränder auf <b>Keine</b> stellen, <b>Hintergrundgrafiken</b> aktivieren,
       Kopf- und Fußzeilen abschalten, Skalierung <b>100 %</b>. Das Seitenformat (A4 hoch/quer) setzt die Vorlage selbst.
-      <b>iPhone und iPad:</b> Safari druckt seine Fußzeile immer mit und bricht volle A4-Bögen auf zwei Seiten um — dafür <b>Rand für Browser-Fußzeile</b> angehakt lassen.
+      <b>iPhone und iPad:</b> Safari druckt seine Fußzeile immer mit und bricht volle A4-Bögen auf zwei Seiten um — dafür <b>Rand für Browser-Fußzeile</b> anhaken.
     </p>
   </div>
   </div></div>
@@ -803,7 +874,8 @@ const CONFIG = {
   mode:"1", orientation:"landscape", farbe:true,
   cw:105, ch:140, margin:8, fontScale:100,
   marks:false, legende:true, trim:true, fuellen:true, copies:1, zoom:100,
-  browserrand:true,       // Platz fuer die vom Browser aufgedruckte Kopf- und Fusszeile
+  browserrand:false,      // Platz fuer die vom Browser aufgedruckte Fusszeile
+  theme:"modern",         // nur Schriftart und Grundgroesse des Plans
   auswahl:null            // null = alle
 };
 
@@ -1188,6 +1260,14 @@ document.getElementById("legende").addEventListener("change", e => { CONFIG.lege
 document.getElementById("trim").addEventListener("change", e => { CONFIG.trim = e.target.checked; zeichne(); });
 document.getElementById("fuellen").addEventListener("change", e => { CONFIG.fuellen = e.target.checked; zeichne(); });
 document.getElementById("browserrand").addEventListener("change", e => { CONFIG.browserrand = e.target.checked; zeichne(); });
+
+/* Die Themen wirken allein ueber CSS-Variablen — neu zeichnen ist unnoetig. */
+function setzeThema(){ document.body.dataset.theme = CONFIG.theme; }
+document.getElementById("theme").addEventListener("change", e => {
+  CONFIG.theme = e.target.value;
+  setzeThema();
+});
+setzeThema();
 /* Der Browser leitet den Dateinamen des PDFs vom Seitentitel ab. Erst beim
    Druck umzustellen reicht nicht: Safari unter iOS kennt „beforeprint“ nicht.
    Darum traegt der Titel dauerhaft den Dateinamen und wird bei jeder
