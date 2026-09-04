@@ -1068,6 +1068,7 @@ function aktiveKlassen(){
 }
 
 function zeichne(){
+  setzeTitel();
   const L = rechneLayout();
   const host = document.getElementById("pages");
   host.innerHTML = "";
@@ -1185,6 +1186,52 @@ document.getElementById("legende").addEventListener("change", e => { CONFIG.lege
 document.getElementById("trim").addEventListener("change", e => { CONFIG.trim = e.target.checked; zeichne(); });
 document.getElementById("fuellen").addEventListener("change", e => { CONFIG.fuellen = e.target.checked; zeichne(); });
 document.getElementById("browserrand").addEventListener("change", e => { CONFIG.browserrand = e.target.checked; zeichne(); });
+/* Der Browser leitet den Dateinamen des PDFs vom Seitentitel ab. Erst beim
+   Druck umzustellen reicht nicht: Safari unter iOS kennt „beforeprint“ nicht.
+   Darum traegt der Titel dauerhaft den Dateinamen und wird bei jeder
+   Aenderung mitgezogen.                                                   */
+
+const NAME_MAX = 110;          // Grenze, damit der Dateiname handhabbar bleibt
+
+function dateiTeil(text){
+  return String(text == null ? "" : text).trim()
+    .replace(/[\\/:*?"<>|]+/g, "")   // in Dateinamen unzulaessig
+    .replace(/\s+/g, "-");
+}
+
+/* „gueltig ab“ ist ein freies Textfeld. Fuer den Dateinamen wird daraus
+   ein ISO-Datum — sortierbar und ohne Punkte, die manche Browser fuer
+   eine Dateiendung halten.                                             */
+function isoDatum(text){
+  const t = String(text == null ? "" : text).trim();
+  const zwei = n => String(n).padStart(2, "0");
+
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);          // schon ISO
+  if(m) return m[1] + "-" + zwei(m[2]) + "-" + zwei(m[3]);
+
+  m = t.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})$/);  // 31.08.2026, 31/8/26
+  if(m){
+    let jahr = m[3];
+    if(jahr.length === 2) jahr = (+jahr > 70 ? "19" : "20") + jahr;
+    return jahr + "-" + zwei(m[2]) + "-" + zwei(m[1]);
+  }
+  return dateiTeil(t);                                        // unbekanntes Format
+}
+
+/* „Stundenplan 5a 2026-08-31“ — bei mehreren Klassen jede einzeln. */
+function druckDateiname(){
+  const klassen = aktiveKlassen().map(k => dateiTeil(k.klasse)).filter(Boolean);
+  const ab = isoDatum(DATEN.gueltigAb);
+  let name = ["Stundenplan", ...klassen, ab].filter(Boolean).join(" ");
+  if(name.length > NAME_MAX) name = ["Stundenplan", "alle", ab].filter(Boolean).join(" ");
+  return name;
+}
+
+function setzeTitel(){
+  const name = druckDateiname();
+  if(document.title !== name) document.title = name;
+}
+
 document.getElementById("btnPrint").addEventListener("click", () => window.print());
 
 /* Klassenauswahl */
