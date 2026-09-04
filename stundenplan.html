@@ -116,6 +116,19 @@ input[type=range]{ accent-color:var(--amber); width:120px; }
 .btn.primary{ background:var(--amber); color:#241c0c; border-color:#c98d2e; }
 .btn.primary:hover{ background:#eeb254; }
 
+/* Einklappbarer Teil der Leiste (Zeile 2 + 3) */
+.tb-collapse{
+  display:grid; grid-template-rows:1fr;
+  transition:grid-template-rows .28s ease;
+}
+.tb-collapse > .tb-inner{ overflow:hidden; min-height:0; }
+.tb-collapse[data-zu="true"]{ grid-template-rows:0fr; }
+.tb-collapse .tb-row:first-child{ border-top:1px solid var(--shell-line); }
+
+#btnMore{ display:inline-flex; align-items:center; gap:7px; }
+#btnMore .chev{ font-size:11px; line-height:1; transition:transform .2s ease; }
+#btnMore[aria-expanded="false"] .chev{ transform:rotate(-90deg); }
+
 .spacer{ flex:1 1 auto; }
 .val{ font-family:var(--mono); font-size:12px; color:var(--amber); min-width:44px; }
 
@@ -246,9 +259,26 @@ table.pg td.z small{ display:block; font-size:9.5px; color:#7a736a; }
 }
 .pz.voll{ border-left-color:var(--c,#666); background:#26241f; }
 .pz input.txt{ width:100%; }
+.pz .z1{ display:flex; align-items:center; gap:5px; }
+.pz .z1 input.txt{ width:0; flex:1 1 0; }
 .pz .z2{ display:flex; gap:4px; }
 .pz .z2 input.txt{ width:0; flex:1 1 0; font-family:var(--mono); font-size:11.5px; }
 .pz .z2 select.txt{ width:50px; flex:0 0 50px; font-size:11.5px; padding:4px 2px; }
+
+/* Ziehen & Ablegen (Klassen und Plan-Zellen tauschen die Plaetze) */
+.griff{
+  flex:0 0 auto; cursor:grab; user-select:none;
+  font-size:14px; line-height:1; color:#6d665c; padding:2px 1px;
+}
+.griff:hover{ color:var(--amber); }
+.griff:active{ cursor:grabbing; }
+.drag-quelle{ opacity:.4; }
+.pz.drag-ziel{
+  outline:2px dashed var(--amber); outline-offset:2px;
+  background:#2f2a20;
+}
+.kl-leiste button.kl.drag-ziel{ outline:2px dashed var(--amber); outline-offset:2px; }
+.kl-leiste button.kl .griff{ display:inline-block; margin-right:5px; font-size:12px; vertical-align:-1px; }
 
 .warn{
   font-size:12px; line-height:1.55; color:#f0c98a;
@@ -508,9 +538,12 @@ tr.pause td{
     </div>
 
     <div class="spacer"></div>
+    <button class="btn" id="btnMore" aria-expanded="true" aria-controls="tbMore" title="Einstellungen ein-/ausklappen"><span class="chev" aria-hidden="true">▾</span>Einstellungen</button>
+    <button class="btn primary" id="btnEdit">Daten bearbeiten</button>
     <button class="btn primary" id="btnPrint">Drucken / PDF</button>
   </div>
 
+  <div class="tb-collapse" id="tbMore"><div class="tb-inner">
   <div class="tb-row">
     <div class="grp">
       <label class="lbl">Klassen</label>
@@ -550,7 +583,6 @@ tr.pause td{
       <input type="range" id="zoom" min="25" max="150" step="1" value="100">
       <span class="val" id="zoomVal">100 %</span>
     </div>
-    <button class="btn" id="btnEdit">Daten bearbeiten</button>
   </div>
 
   <div class="tb-row">
@@ -559,6 +591,7 @@ tr.pause td{
       Kopf- und Fußzeilen abschalten, Skalierung <b>100 %</b>. Das Seitenformat (A4 hoch/quer) setzt die Vorlage selbst.
     </p>
   </div>
+  </div></div>
 
 </header>
 
@@ -1397,6 +1430,72 @@ function zelleSchreiben(kl, tagKurz, nr, feldName, wert){
   if(!e.fach && !e.raum && !e.lehrer && !e.hinweis) delete tag[schluessel];
 }
 
+/* ---------- Verschieben per Ziehen ----------
+   Quelle und Ziel tauschen ihre Plaetze — sowohl bei den Klassen
+   als auch bei den Zellen des Stundenplans.                       */
+
+let dndZug = null;            // {art:"klasse"|"zelle", ...} waehrend des Ziehens
+
+function zelleLesen(kl, tagKurz, nr){
+  return ((kl.plan || {})[tagKurz] || {})[String(nr)] || null;
+}
+function zelleSetzen(kl, tagKurz, nr, eintrag){
+  kl.plan = kl.plan || {};
+  const tag = kl.plan[tagKurz] = kl.plan[tagKurz] || {};
+  const schluessel = String(nr);
+  if(eintrag && Object.keys(eintrag).length) tag[schluessel] = eintrag;
+  else delete tag[schluessel];
+}
+function zellenTauschen(kl, a, b){
+  const ea = zelleLesen(kl, a.tag, a.nr);
+  const eb = zelleLesen(kl, b.tag, b.nr);
+  zelleSetzen(kl, a.tag, a.nr, eb);
+  zelleSetzen(kl, b.tag, b.nr, ea);
+}
+
+function griff(titel){
+  const g = el("span","griff","\u283f");
+  g.title = titel;
+  g.setAttribute("aria-hidden","true");
+  return g;
+}
+
+/* Griff wird zur Ziehquelle; gezeigt wird beim Ziehen das ganze Kaestchen. */
+function dndQuelle(griffEl, bildEl, zug){
+  griffEl.draggable = true;
+  griffEl.addEventListener("dragstart", ev => {
+    dndZug = zug;
+    ev.dataTransfer.effectAllowed = "move";
+    try{ ev.dataTransfer.setData("text/plain", zug.art); }catch(e){}
+    if(ev.dataTransfer.setDragImage) ev.dataTransfer.setDragImage(bildEl, 20, 16);
+    setTimeout(() => bildEl.classList.add("drag-quelle"), 0);
+  });
+  griffEl.addEventListener("dragend", dndAufraeumen);
+}
+
+function dndZiel(boxEl, art, istSelbst, beiAblegen){
+  boxEl.addEventListener("dragover", ev => {
+    if(!dndZug || dndZug.art !== art || istSelbst(dndZug)) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "move";
+    boxEl.classList.add("drag-ziel");
+  });
+  boxEl.addEventListener("dragleave", () => boxEl.classList.remove("drag-ziel"));
+  boxEl.addEventListener("drop", ev => {
+    if(!dndZug || dndZug.art !== art || istSelbst(dndZug)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    const zug = dndZug;
+    dndAufraeumen();
+    beiAblegen(zug);
+  });
+}
+
+function dndAufraeumen(){
+  dndZug = null;
+  document.querySelectorAll(".drag-quelle, .drag-ziel")
+    .forEach(n => n.classList.remove("drag-quelle","drag-ziel"));
+}
+
 function paneKlassen(){
   const p = document.createDocumentFragment();
   const klassen = DATEN.klassen || [];
@@ -1405,9 +1504,20 @@ function paneKlassen(){
   /* Auswahlleiste */
   const leiste = el("div","kl-leiste");
   klassen.forEach((k, i) => {
-    const b = el("button","kl" + (i === edKlasse ? " on" : ""), k.klasse || "?");
+    const b = el("button","kl" + (i === edKlasse ? " on" : ""));
     b.type = "button";
+    b.title = "Am Griff auf eine andere Klasse ziehen — beide tauschen die Plätze";
+    b.append(griff("Ziehen zum Umsortieren"), document.createTextNode(k.klasse || "?"));
     b.addEventListener("click", () => { edKlasse = i; baueEditor(); });
+    dndQuelle(b.firstChild, b, {art:"klasse", i});
+    dndZiel(b, "klasse", z => z.i === i, z => {
+      const liste = DATEN.klassen;
+      const t = liste[z.i]; liste[z.i] = liste[i]; liste[i] = t;
+      if(edKlasse === z.i)     edKlasse = i;
+      else if(edKlasse === i)  edKlasse = z.i;
+      nachAenderung(true);
+      meldung("✓ Klassen getauscht");
+    });
     leiste.append(b);
   });
   leiste.append(
@@ -1466,7 +1576,8 @@ function paneKlassen(){
 
   /* Das Gitter */
   const s2 = abschnitt("Stundenplan " + (kl.klasse || ""),
-    "Fach leer lassen = Freistunde. „Dauer“ verbindet die Zelle mit den folgenden Stunden zur Doppel- oder Blockstunde.");
+    "Fach leer lassen = Freistunde. „Dauer“ verbindet die Zelle mit den folgenden Stunden zur Doppel- oder Blockstunde. "
+    + "Am Griff ⠿ lässt sich eine Stunde auf eine andere ziehen — beide tauschen die Plätze.");
   const wrap = el("div","pg-wrap");
   const tab = el("table","pg");
   const tage = DATEN.tage || [], stunden = DATEN.stunden || [];
@@ -1501,12 +1612,24 @@ function paneKlassen(){
       const box = el("div","pz" + (e.fach ? " voll" : ""));
       if(e.fach) box.style.setProperty("--c", fachFarbe(e.fach));
 
-      box.append(eingabe(e.fach, v => {
+      const z1 = el("div","z1");
+      const g  = griff("Auf eine andere Stunde ziehen — beide tauschen die Plätze");
+      z1.append(g, eingabe(e.fach, v => {
         zelleSchreiben(kl, kurz, st.nr, "fach", v.trim());
         box.classList.toggle("voll", !!v.trim());
         box.style.setProperty("--c", v.trim() ? fachFarbe(v.trim()) : "");
         nachAenderung();
       }, {liste:"dlFach", platzhalter:"Fach"}));
+      box.append(z1);
+
+      dndQuelle(g, box, {art:"zelle", tag:kurz, nr:st.nr});
+      dndZiel(box, "zelle",
+        z => z.tag === kurz && String(z.nr) === String(st.nr),
+        z => {
+          zellenTauschen(kl, {tag:z.tag, nr:z.nr}, {tag:kurz, nr:st.nr});
+          nachAenderung(true);
+          meldung("✓ Stunden getauscht");
+        });
 
       const z2 = el("div","z2");
       z2.append(
@@ -1667,6 +1790,21 @@ document.getElementById("edTabs").addEventListener("click", e => {
     .forEach(x => x.classList.toggle("on", x === b));
   baueEditor();
 });
+
+/* Zeile 2 + 3 der Werkzeugleiste ein-/ausklappen */
+const btnMore = document.getElementById("btnMore");
+const tbMore  = document.getElementById("tbMore");
+const TB_KEY  = "stundenplan-leiste";
+
+function setLeiste(offen){
+  tbMore.dataset.zu = offen ? "false" : "true";
+  btnMore.setAttribute("aria-expanded", offen ? "true" : "false");
+  try{ localStorage.setItem(TB_KEY, offen ? "1" : "0"); }catch(e){}
+}
+btnMore.addEventListener("click", () => {
+  setLeiste(btnMore.getAttribute("aria-expanded") !== "true");
+});
+try{ if(localStorage.getItem(TB_KEY) === "0") setLeiste(false); }catch(e){}
 
 document.getElementById("btnEdit").addEventListener("click", () => {
   editor.hidden = !editor.hidden;
