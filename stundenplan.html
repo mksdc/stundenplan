@@ -75,7 +75,7 @@ body{
   color:var(--shell-ink-2);
 }
 
-.grp{ display:flex; align-items:center; gap:9px; }
+.grp{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
 .grp > label.lbl{
   font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--shell-ink-2); white-space:nowrap;
@@ -101,7 +101,7 @@ input[type=number], input[type=text]{
 input[type=number]:focus, input[type=text]:focus{ outline:2px solid var(--amber); outline-offset:1px; }
 input[type=range]{ accent-color:var(--amber); width:120px; }
 
-.chk{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--shell-ink-2); cursor:pointer; user-select:none; }
+.chk{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--shell-ink-2); cursor:pointer; user-select:none; white-space:nowrap; }
 .chk input{ accent-color:var(--amber); width:14px; height:14px; }
 .chk:hover{ color:var(--shell-ink); }
 
@@ -583,6 +583,7 @@ tr.pause td{
       <label class="chk"><input type="checkbox" id="legende" checked> Legende</label>
       <label class="chk"><input type="checkbox" id="trim" checked> Randstunden kürzen</label>
       <label class="chk" title="Ist nur eine Klasse gewählt, wird der Bogen mit Kopien vollständig gefüllt"><input type="checkbox" id="fuellen" checked> Blatt füllen</label>
+      <label class="chk" title="Lässt unten 12 mm frei, damit die vom Browser aufgedruckte Fußzeile (Datum, Adresse, Seitenzahl) den Plan nicht überdeckt. Safari unter iOS lässt sie sich nicht abschalten — dort angehakt lassen."><input type="checkbox" id="fussrand" checked> Rand für Browser-Fußzeile</label>
     </div>
 
     <div class="spacer"></div>
@@ -598,6 +599,7 @@ tr.pause td{
     <p class="hint">
       <b>Druckdialog:</b> Ränder auf <b>Keine</b> stellen, <b>Hintergrundgrafiken</b> aktivieren,
       Kopf- und Fußzeilen abschalten, Skalierung <b>100 %</b>. Das Seitenformat (A4 hoch/quer) setzt die Vorlage selbst.
+      <b>iPhone und iPad:</b> Safari druckt seine Fußzeile immer mit — dafür <b>Rand für Browser-Fußzeile</b> angehakt lassen.
     </p>
   </div>
   </div></div>
@@ -801,6 +803,7 @@ const CONFIG = {
   mode:"1", orientation:"landscape", farbe:true,
   cw:105, ch:140, margin:8, fontScale:100,
   marks:false, legende:true, trim:true, fuellen:true, copies:1, zoom:100,
+  fussrand:true,          // Platz fuer die vom Browser aufgedruckte Fusszeile
   auswahl:null            // null = alle
 };
 
@@ -1024,10 +1027,15 @@ function planKarte(kl, u){
    4. SEITENAUFTEILUNG (Nutzen)
    ============================================================ */
 
+/* Safari unter iOS druckt immer eine Fusszeile (Datum, Adresse, Seitenzahl)
+   und laesst sie sich nicht abschalten. Sie liegt sonst ueber dem Plan.     */
+const FUSSRAND_MM = 12;
+
 function rechneLayout(){
   const P = CONFIG.orientation === "landscape" ? {w:297, h:210} : {w:210, h:297};
   const M = Math.min(25, Math.max(0, CONFIG.margin));
-  const druckW = P.w - 2*M, druckH = P.h - 2*M;
+  const F = CONFIG.fussrand ? FUSSRAND_MM : 0;
+  const druckW = P.w - 2*M, druckH = P.h - 2*M - F;
 
   let cols, rows, slotW, slotH;
 
@@ -1049,7 +1057,7 @@ function rechneLayout(){
   /* Maßstab: kleinerer der beiden Verhältnisse — garantiert, dass alles passt */
   const u = Math.min(slotW/druckW, slotH/druckH) * (CONFIG.fontScale/100);
 
-  return { P, M, druckW, druckH, cols, rows, slotW, slotH, u, proSeite: cols*rows };
+  return { P, M, F, druckW, druckH, cols, rows, slotW, slotH, u, proSeite: cols*rows };
 }
 
 function aktiveKlassen(){
@@ -1091,7 +1099,7 @@ function zeichne(){
     const sheet = el("div","sheet" + (CONFIG.marks ? " marks" : ""));
     sheet.style.width  = L.P.w + "mm";
     sheet.style.height = (L.P.h - 0.1) + "mm";   // Sicherheitsabzug gegen Leerseiten
-    sheet.style.padding = L.M + "mm";
+    sheet.style.padding = L.M + "mm " + L.M + "mm " + (L.M + L.F) + "mm";
 
     const grid = el("div","sheet-grid");
     grid.style.gridTemplateColumns = `repeat(${L.cols}, ${L.slotW}mm)`;
@@ -1175,6 +1183,7 @@ document.getElementById("marks").addEventListener("change", e => { CONFIG.marks 
 document.getElementById("legende").addEventListener("change", e => { CONFIG.legende = e.target.checked; zeichne(); });
 document.getElementById("trim").addEventListener("change", e => { CONFIG.trim = e.target.checked; zeichne(); });
 document.getElementById("fuellen").addEventListener("change", e => { CONFIG.fuellen = e.target.checked; zeichne(); });
+document.getElementById("fussrand").addEventListener("change", e => { CONFIG.fussrand = e.target.checked; zeichne(); });
 document.getElementById("btnPrint").addEventListener("click", () => window.print());
 
 /* Klassenauswahl */
